@@ -1,12 +1,19 @@
 import { useState } from "react";
 import Question from "./Question";
-import { Box, Button, Container, TextField, Typography } from "@mui/material";
+import { Alert, Box, Button, Container, Snackbar, TextField, Typography } from "@mui/material";
+import { createNewSurvey } from "../../api/survey";
 
 export default function SurveyCreatorPage(){
   const [questions, setQuestions] = useState([]);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [snackbarStatus, changeSnackbarStatus] = useState(false);
+  const [snackbarType, changeSnackbarType] = useState("error");
+  const [snackbarInfo, changeSnackbarInfo] = useState("");
 
+  const closeSnackbar = () => {
+    changeSnackbarStatus(false);
+  }
 
   const handleTitleChange = (e) => {
     setTitle(e.target.value);
@@ -24,7 +31,7 @@ export default function SurveyCreatorPage(){
         id: Date.now(),
         type,
         text: '',
-        options: type === 'single' || type === 'multiple' ? [''] : [],
+        options: type === 'SINGLE_CHOICE' || type === 'MULTIPLE_CHOICE' ? [''] : [],
       },
     ]);
   };
@@ -38,6 +45,27 @@ export default function SurveyCreatorPage(){
   const updateQuestion = (id, updatedQuestion) => {
     setQuestions(questions.map((q) => (q.id === id ? updatedQuestion : q)));
   };
+
+  const sendData = async () => {
+    try{
+        const data = {
+            items: questions,
+            title: title,
+            description: description
+        }
+        await createNewSurvey(data);
+        changeSnackbarInfo("Ankieta została utworzona");
+        changeSnackbarType("success");
+        changeSnackbarStatus(true);
+        setQuestions([]);
+        setTitle("");
+        setDescription("");
+    }catch(error){
+        changeSnackbarInfo("Błąd tworzenia ankiety. Spróbuj ponownie później.");
+        changeSnackbarType("error");
+        changeSnackbarStatus(true);
+    }
+  }
 
   return (
     <Container
@@ -88,21 +116,21 @@ export default function SurveyCreatorPage(){
             <Button 
                 color="info"
                 variant="contained" 
-                onClick={() => addQuestion('text')}
+                onClick={() => addQuestion('TEXT')}
             >
                 Dodaj pytanie otwarte
             </Button>
             <Button 
                 color="info"
                 variant="contained" 
-                onClick={() => addQuestion('single')}
+                onClick={() => addQuestion('SINGLE_CHOICE')}
             >
                 Dodaj pytanie jednokrotnego wyboru
             </Button>
             <Button 
                 color="info"
                 variant="contained" 
-                onClick={() => addQuestion('multiple')}
+                onClick={() => addQuestion('MULTIPLE_CHOICE')}
             >
                 Dodaj pytanie wielokrotnego wyboru
             </Button>
@@ -136,12 +164,27 @@ export default function SurveyCreatorPage(){
             <Button 
                 color="info"
                 variant="contained" 
-                onClick={() => console.log('Ankieta:', questions)}
+                onClick={() => sendData()}
             >
                 Zapisz ankietę
             </Button>
             : null 
         }
+
+        <Snackbar
+            open={ snackbarStatus }
+            autoHideDuration={ 6000 }
+            onClose={ closeSnackbar }
+        >
+            <Alert
+                onClose={ closeSnackbar }
+                severity= { snackbarType }
+                variant="filled"
+                sx={{ width: '100%' }}
+            >
+                { snackbarInfo }
+            </Alert>
+        </Snackbar>
       
     </Container>
   );

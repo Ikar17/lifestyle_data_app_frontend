@@ -1,31 +1,47 @@
 import { Box, Container, Typography } from "@mui/material";
 import SurveySection from "./SurveySection";
+import helloImage from "../../assets/hello.png"
+import AirDataSection from "./AirDataSection";
 
 export default function MainPage(){
 
     return(
-        <Container
-            maxWidth='lg'
-            sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                mt: '30px'
-            }}
-        >
+        <>
             <Box
                 sx={{
                     width: '100%',
-                    bgcolor: 'white',
-                    p: '10px',
-                    boxSizing: 'border-box'
+                    height: '30vh',
+                    backgroundImage:`url(${helloImage})`,
+                    backgroundRepeat: 'no-repeat',
+                    backgroundSize: 'cover',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center'
                 }}
             >
-                <Typography component="h6" variant="h6">
-                    Witaj w aplikacji!
+                <Typography 
+                    component="p"
+                    variant="h4"
+                    sx={{
+                        fontWeight: 'bold'
+                    }}
+                >
+                    Dzień dobry!
                 </Typography>
             </Box>
-            <SurveySection />
-        </Container>
+            <Container
+                maxWidth='lg'
+                sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                }}
+            >
+                
+                <SurveySection />
+                <AirDataSection />
+            </Container>
+        </>
+        
     )
 }

@@ -38,7 +38,7 @@ const Question = ({ question, updateQuestion, removeQuestion }) => {
         variant="filled"
       />
 
-      {question.type === 'single' || question.type === 'multiple' ? (
+      {question.type === 'SINGLE_CHOICE' || question.type === 'MULTIPLE_CHOICE' ? (
         <Box>
           <Typography variant='h6'>Opcje odpowiedzi:</Typography>
           {question.options.map((option, index) => (
