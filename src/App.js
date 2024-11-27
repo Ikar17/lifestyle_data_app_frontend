@@ -21,6 +21,7 @@ function App() {
               <Route element={ <PrivateRoute/> }>
                 <Route path="dashboard" element={ <MainPage /> }/>
                 <Route path="survey/creator" element={ <SurveyCreatorPage /> }/>
+                <Route path="survey/creator/:surveyId" element={ <SurveyCreatorPage /> }/>
               </Route>
             </Route>
         </Routes>

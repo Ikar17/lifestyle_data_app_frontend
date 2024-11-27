@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Question from "./Question";
 import { Alert, Box, Button, Container, Snackbar, TextField, Typography } from "@mui/material";
-import { createNewSurvey } from "../../api/survey";
+import { createNewSurvey, getSurveyById, updateSurvey } from "../../api/survey";
+import { useParams } from "react-router-dom";
 
 export default function SurveyCreatorPage(){
   const [questions, setQuestions] = useState([]);
@@ -10,6 +11,13 @@ export default function SurveyCreatorPage(){
   const [snackbarStatus, changeSnackbarStatus] = useState(false);
   const [snackbarType, changeSnackbarType] = useState("error");
   const [snackbarInfo, changeSnackbarInfo] = useState("");
+  const { surveyId } = useParams(); 
+
+  useEffect(() => {
+    if (surveyId) {
+        loadSurvey(surveyId);
+    }
+  }, []);
 
   const closeSnackbar = () => {
     changeSnackbarStatus(false);
@@ -47,25 +55,53 @@ export default function SurveyCreatorPage(){
   };
 
   const sendData = async () => {
-    try{
-        const data = {
-            items: questions,
-            title: title,
-            description: description
-        }
+    try {
+      const data = {
+        items: questions,
+        title,
+        description,
+      };
+
+      let flag = true;
+      if (surveyId) {
+        flag = await updateSurvey(surveyId, data);
+        if(flag) changeSnackbarInfo("Ankieta została zaktualizowana");
+        else changeSnackbarInfo("Struktura ankiety, która jest rozesłana do użytkowników nie może być już edytowana");
+      } else {
         await createNewSurvey(data);
         changeSnackbarInfo("Ankieta została utworzona");
-        changeSnackbarType("success");
-        changeSnackbarStatus(true);
         setQuestions([]);
         setTitle("");
         setDescription("");
-    }catch(error){
-        changeSnackbarInfo("Błąd tworzenia ankiety. Spróbuj ponownie później.");
+      }
+
+      if(flag){
+        changeSnackbarType("success");
+      }else{
         changeSnackbarType("error");
-        changeSnackbarStatus(true);
+      }
+
+      changeSnackbarStatus(true);
+
+    } catch (error) {
+      changeSnackbarInfo("Błąd zapisu ankiety. Spróbuj ponownie później.");
+      changeSnackbarType("error");
+      changeSnackbarStatus(true);
     }
-  }
+  };
+
+  const loadSurvey = async (id) => {
+    try {
+      const survey = await getSurveyById(id);
+      setTitle(survey.title);
+      setDescription(survey.description);
+      setQuestions(survey.items);
+    } catch (error) {
+      changeSnackbarInfo("Błąd ładowania ankiety.");
+      changeSnackbarType("error");
+      changeSnackbarStatus(true);
+    }
+  };
 
   return (
     <Container

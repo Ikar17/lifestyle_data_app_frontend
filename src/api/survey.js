@@ -40,7 +40,6 @@ export async function getMySurveys() {
           Authorization: `Bearer ${token}`,
         },
       })
-      console.log("jestem", response.data); // Poprawione logowanie
       return response.data;
 
     } catch (error) {
@@ -48,3 +47,47 @@ export async function getMySurveys() {
       throw new Error("Problem z pobraniem ankiet. Spróbuj ponownie później.");
     }
   }
+
+  export async function getSurveyById(id) {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      throw new Error("Brak autoryzacji");
+    }
+  
+    try {
+      const response = await axios.get(`${BACKEND_URL}/survey/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      return response.data;
+
+    } catch (error) {
+      console.error("Błąd podczas pobierania ankiet:", error);
+      throw new Error("Problem z pobraniem ankietY. Spróbuj ponownie później.");
+    }
+  }
+
+  export async function updateSurvey(id, data){
+  
+    const token = localStorage.getItem("token");
+    if(token == null) throw new Error("Brak autoryzacji");
+
+    try{
+        return await axios.put(`${BACKEND_URL}/survey/${id}`, data, {
+            headers:{
+                "Authorization" : "Bearer " + token
+            }
+        })
+        .then(function (response) {
+            return true;
+        })
+        .catch(function (error) {
+          if(error.status == 406) return false;
+          throw new Error(error);
+        })
+    }catch(error){
+        throw new Error("Problem z zaktualizowaniem ankiety. Spróbuj ponownie później.");
+    }
+    
+}

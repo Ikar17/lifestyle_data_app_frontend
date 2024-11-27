@@ -1,12 +1,14 @@
 import { Box, Button, Grid, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { getMySurveys } from "../../api/survey";
 import SurveyCard from "./SurveyCard";
 
 export default function SurveySection(){
 
     const [surveys, setSurveys] = useState([]);
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         getSurveys();
@@ -23,7 +25,7 @@ export default function SurveySection(){
 
     const handleEdit = (id) => {
         console.log('Edytuj ankietę:', id);
-        // Logika edycji
+        navigate(`/survey/creator/${id}`);
       };
     
       const handleManage = (id) => {
