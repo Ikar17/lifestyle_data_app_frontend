@@ -8,6 +8,7 @@ import MainPage from './pages/MainPage/MainPage';
 import SurveyCreatorPage from './pages/SurveyCreatorPage/SurveyCreatorPage';
 import { AuthProvider } from './contexts/AuthContext';
 import PrivateRoute from './utils/PrivateRoute';
+import SurveyManagePage from './pages/SurveyManagePage/SurveyManagePage';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
                 <Route path="dashboard" element={ <MainPage /> }/>
                 <Route path="survey/creator" element={ <SurveyCreatorPage /> }/>
                 <Route path="survey/creator/:surveyId" element={ <SurveyCreatorPage /> }/>
+                <Route path="survey/manage/:surveyId" element={ <SurveyManagePage /> }/>
               </Route>
             </Route>
         </Routes>

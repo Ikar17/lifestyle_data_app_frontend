@@ -30,7 +30,7 @@ export default function SurveySection(){
     
       const handleManage = (id) => {
         console.log('Zarządzaj ankietą:', id);
-        // Logika zarządzania
+        navigate(`/survey/manage/${id}`);
       };
     
       const handleResults = (id) => {

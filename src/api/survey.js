@@ -91,3 +91,27 @@ export async function getMySurveys() {
     }
     
 }
+
+export async function sendingSurvey(data){
+  
+  const token = localStorage.getItem("token");
+  if(token == null) throw new Error("Brak autoryzacji");
+
+  try{
+      await axios.post(`${BACKEND_URL}/survey/sending`, data, {
+          headers:{
+              "Authorization" : "Bearer " + token
+          }
+      })
+      .then(function (response) {
+          console.log(response)
+      })
+      .catch(function (error) {
+          console.log(error)
+          throw new Error(error);
+      })
+  }catch(error){
+      throw new Error("Problem z wysłaniem ankiety. Spróbuj ponownie później.");
+  }
+  
+}
