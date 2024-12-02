@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card, CardContent, CardActions, Typography, Button, Grid } from '@mui/material';
 
-const SurveyCard = ({ survey, onEdit, onManage, onResults }) => {
+const SurveyCard = ({ survey, onEdit, onManage, onResults, onFillSurvey, onViewResponses, userRole }) => {
   return (
     <Card variant="outlined" sx={{ padding: 2 }}>
       <CardContent>
@@ -16,15 +16,31 @@ const SurveyCard = ({ survey, onEdit, onManage, onResults }) => {
         </Typography>
       </CardContent>
       <CardActions>
-        <Button size="small" onClick={() => onEdit(survey.survey.id)}>
-          Edytuj
-        </Button>
-        <Button size="small" onClick={() => onManage(survey.survey.id)}>
-          Zarządzaj
-        </Button>
-        <Button size="small" onClick={() => onResults(survey.survey.id)}>
-          Rezultaty
-        </Button>
+        {userRole === 'ANALYST' ? (
+          <>
+            <Button size="small" onClick={() => onEdit(survey.survey.id)}>
+              Edytuj
+            </Button>
+            <Button size="small" onClick={() => onManage(survey.survey.id)}>
+              Zarządzaj
+            </Button>
+            <Button size="small" onClick={() => onResults(survey.survey.id)}>
+              Rezultaty
+            </Button>
+          </>
+        ) : (
+          <>
+            {survey.surveyLog && survey.surveyLog.status === 'COMPLETE' ? (
+              <Button size="small" onClick={() => onViewResponses(survey.surveyLog.id)}>
+                Zobacz swoje odpowiedzi
+              </Button>
+            ) : (
+              <Button size="small" onClick={() => onFillSurvey(survey.survey.id, survey.surveyLog.id)}>
+                Wypełnij ankietę
+              </Button>
+            )}
+          </>
+        )}
       </CardActions>
     </Card>
   );
