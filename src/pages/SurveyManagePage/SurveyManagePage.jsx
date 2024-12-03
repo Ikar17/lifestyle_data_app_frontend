@@ -6,8 +6,8 @@ import {
   Snackbar,
   Alert
 } from '@mui/material';
-import { useParams } from 'react-router-dom';
-import { getSurveyById, sendingSurvey } from '../../api/survey';
+import { useNavigate, useParams } from 'react-router-dom';
+import { getSurveyById, removeSurveyById, sendingSurvey } from '../../api/survey';
 import { getComunnes, getDistricts, getVoivodeships } from '../../api/address';
 
 const SurveyManagePage = () => {
@@ -29,6 +29,7 @@ const SurveyManagePage = () => {
     const [snackbarInfo, changeSnackbarInfo] = useState("");
 
     const { surveyId } = useParams(); 
+    const navigate = useNavigate();
 
 
     useEffect(() => {
@@ -46,8 +47,18 @@ const SurveyManagePage = () => {
     }
   };
 
-  const handleDeleteSurvey = () => {
-    console.log('Ankieta usunięta:');
+  const handleDeleteSurvey = async () => {
+    try{
+      await removeSurveyById(surveyId);
+      changeSnackbarType("success");
+      changeSnackbarInfo("Ankieta została usunięta");
+      changeSnackbarStatus(true);
+      setTimeout(() => navigate("/"), 3000);
+    }catch(error){
+      changeSnackbarType("error");
+      changeSnackbarInfo("Problem z usunięciem ankiety. Spróbuj ponownie później");
+      changeSnackbarStatus(true);
+    }
   };
 
   const handleSendSurvey = async () => {

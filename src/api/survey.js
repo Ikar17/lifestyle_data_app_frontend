@@ -134,3 +134,23 @@ export async function getSurveyAnswers(surveyLogId){
   }
   
 }
+
+
+export async function removeSurveyById(surveyId){
+  
+  const token = localStorage.getItem("token");
+  if(token == null) throw new Error("Brak autoryzacji");
+
+  try{
+      const response = await axios.delete(`${BACKEND_URL}/survey/${surveyId}`, {
+          headers:{
+              "Authorization" : "Bearer " + token
+          }
+      })
+      return response.data;
+      
+  }catch(error){
+      throw new Error("Problem z usunięciem ankiety. Spróbuj ponownie później.");
+  }
+  
+}
