@@ -31,7 +31,7 @@ const SurveyCard = ({ survey, onEdit, onManage, onResults, onFillSurvey, onViewR
         ) : (
           <>
             {survey.surveyLog && survey.surveyLog.status === 'COMPLETE' ? (
-              <Button size="small" onClick={() => onViewResponses(survey.surveyLog.id)}>
+              <Button size="small" onClick={() => onViewResponses(survey.survey.id, survey.surveyLog.id)}>
                 Zobacz swoje odpowiedzi
               </Button>
             ) : (

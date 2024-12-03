@@ -13,7 +13,6 @@ export default function SurveySection() {
 
   useEffect(() => {
     setUserRole(auth.role);
-    console.log(auth.role);
     getSurveys();
   }, []);
 
@@ -21,7 +20,6 @@ export default function SurveySection() {
     try {
       const results = await getMySurveys();
       setSurveys(results);
-      console.log(results);
     } catch (error) {
       console.log(error);
     }
@@ -44,9 +42,8 @@ export default function SurveySection() {
     navigate(`/survey/fill/${surveyId}/${surveyLogId}`);
   };
 
-  const handleViewResponses = (id) => {
-    console.log(id)
-    //navigate(`/survey/responses/${id}`);
+  const handleViewResponses = (surveyId, surveyLogId) => {
+    navigate(`/survey/response/${surveyId}/${surveyLogId}`);
   };
 
   return (

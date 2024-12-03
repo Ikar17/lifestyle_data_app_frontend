@@ -13,7 +13,6 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     try{
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      console.log(userCredential.user.accessToken)
       setToken(userCredential.user.accessToken);
       localStorage.setItem("token", userCredential.user.accessToken);
 

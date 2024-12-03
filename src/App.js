@@ -10,6 +10,7 @@ import { AuthProvider } from './contexts/AuthContext';
 import PrivateRoute from './utils/PrivateRoute';
 import SurveyManagePage from './pages/SurveyManagePage/SurveyManagePage';
 import SurveyFillPage from './pages/SurveyFillPage/SurveyFillPage';
+import SurveyResponsePage from './pages/SurveyResponsePage/SurveyResponsePage';
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
                 <Route path="survey/creator/:surveyId" element={ <SurveyCreatorPage /> }/>
                 <Route path="survey/manage/:surveyId" element={ <SurveyManagePage /> }/>
                 <Route path="survey/fill/:surveyId/:surveyLogId" element={ <SurveyFillPage /> }/>
+                <Route path="survey/response/:surveyId/:surveyLogId" element={ <SurveyResponsePage /> }/>
               </Route>
             </Route>
         </Routes>

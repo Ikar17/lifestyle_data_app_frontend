@@ -6,21 +6,11 @@ export async function createNewSurvey(data){
     const token = localStorage.getItem("token");
     if(token == null) throw new Error("Brak autoryzacji");
 
-    console.log(data);
-    console.log(token);
-
     try{
         await axios.post(`${BACKEND_URL}/survey/create`, data, {
             headers:{
                 "Authorization" : "Bearer " + token
             }
-        })
-        .then(function (response) {
-            console.log(response)
-        })
-        .catch(function (error) {
-            console.log(error)
-            throw new Error(error);
         })
     }catch(error){
         throw new Error("Problem z utworzeniem ankiety. Spróbuj ponownie później.");
@@ -103,13 +93,6 @@ export async function sendingSurvey(data){
               "Authorization" : "Bearer " + token
           }
       })
-      .then(function (response) {
-          console.log(response)
-      })
-      .catch(function (error) {
-          console.log(error)
-          throw new Error(error);
-      })
   }catch(error){
       throw new Error("Problem z wysłaniem ankiety. Spróbuj ponownie później.");
   }
@@ -127,15 +110,27 @@ export async function sendSurveyResponse(data){
               "Authorization" : "Bearer " + token
           }
       })
-      .then(function (response) {
-          console.log(response)
-      })
-      .catch(function (error) {
-          console.log(error)
-          throw new Error(error);
-      })
   }catch(error){
       throw new Error("Problem z wysłaniem ankiety. Spróbuj ponownie później.");
+  }
+  
+}
+
+export async function getSurveyAnswers(surveyLogId){
+  
+  const token = localStorage.getItem("token");
+  if(token == null) throw new Error("Brak autoryzacji");
+
+  try{
+      const response = await axios.get(`${BACKEND_URL}/survey/response/${surveyLogId}`, {
+          headers:{
+              "Authorization" : "Bearer " + token
+          }
+      })
+      return response.data;
+      
+  }catch(error){
+      throw new Error("Problem z pobraniem odpowiedzi do ankiety. Spróbuj ponownie później.");
   }
   
 }
