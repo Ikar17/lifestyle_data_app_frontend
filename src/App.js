@@ -11,6 +11,7 @@ import PrivateRoute from './utils/PrivateRoute';
 import SurveyManagePage from './pages/SurveyManagePage/SurveyManagePage';
 import SurveyFillPage from './pages/SurveyFillPage/SurveyFillPage';
 import SurveyResponsePage from './pages/SurveyResponsePage/SurveyResponsePage';
+import SurveyResultsPage from './pages/SurveyResultsPage/SurveyResultPage';
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
                 <Route path="survey/manage/:surveyId" element={ <SurveyManagePage /> }/>
                 <Route path="survey/fill/:surveyId/:surveyLogId" element={ <SurveyFillPage /> }/>
                 <Route path="survey/response/:surveyId/:surveyLogId" element={ <SurveyResponsePage /> }/>
+                <Route path="survey/results/:surveyId" element={ <SurveyResultsPage /> }/>
               </Route>
             </Route>
         </Routes>

@@ -154,3 +154,22 @@ export async function removeSurveyById(surveyId){
   }
   
 }
+
+export async function getSurveyResults(surveyId){
+  
+  const token = localStorage.getItem("token");
+  if(token == null) throw new Error("Brak autoryzacji");
+
+  try{
+      const response = await axios.get(`${BACKEND_URL}/survey/results/${surveyId}`, {
+          headers:{
+              "Authorization" : "Bearer " + token
+          }
+      })
+      return response.data;
+      
+  }catch(error){
+      throw new Error("Problem z pobraniem wyników ankiety. Spróbuj ponownie później.");
+  }
+  
+}

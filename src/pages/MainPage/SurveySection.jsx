@@ -33,9 +33,8 @@ export default function SurveySection() {
     navigate(`/survey/manage/${id}`);
   };
 
-  const handleResults = (id) => {
-    console.log("Rezultaty ankiety:", id);
-    // Logika wyświetlania wyników
+  const handleResults = (surveyId) => {
+    navigate(`/survey/results/${surveyId}`);
   };
 
   const handleFillSurvey = (surveyId, surveyLogId) => {
