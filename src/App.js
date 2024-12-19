@@ -12,29 +12,36 @@ import SurveyManagePage from './pages/SurveyManagePage/SurveyManagePage';
 import SurveyFillPage from './pages/SurveyFillPage/SurveyFillPage';
 import SurveyResponsePage from './pages/SurveyResponsePage/SurveyResponsePage';
 import SurveyResultsPage from './pages/SurveyResultsPage/SurveyResultPage';
+import AirStatisticsPage from './pages/AirStatisticsPage/AirStatisticsPage';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import 'dayjs/locale/pl';
 
 function App() {
   return (
-    <BrowserRouter>
-      <AuthProvider>
-        <Routes>
-            <Route path="/" element={ <Layout /> }>
-              <Route index element={ <WelcomePage /> }/>
-              <Route path="login" element={ <SignInPage /> }/>
-              <Route path="register" element={ <SignUpPage /> }/>
-              <Route element={ <PrivateRoute/> }>
-                <Route path="dashboard" element={ <MainPage /> }/>
-                <Route path="survey/creator" element={ <SurveyCreatorPage /> }/>
-                <Route path="survey/creator/:surveyId" element={ <SurveyCreatorPage /> }/>
-                <Route path="survey/manage/:surveyId" element={ <SurveyManagePage /> }/>
-                <Route path="survey/fill/:surveyId/:surveyLogId" element={ <SurveyFillPage /> }/>
-                <Route path="survey/response/:surveyId/:surveyLogId" element={ <SurveyResponsePage /> }/>
-                <Route path="survey/results/:surveyId" element={ <SurveyResultsPage /> }/>
+    <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="pl">
+      <BrowserRouter>
+        <AuthProvider>
+          <Routes>
+              <Route path="/" element={ <Layout /> }>
+                <Route index element={ <WelcomePage /> }/>
+                <Route path="login" element={ <SignInPage /> }/>
+                <Route path="register" element={ <SignUpPage /> }/>
+                <Route element={ <PrivateRoute/> }>
+                  <Route path="dashboard" element={ <MainPage /> }/>
+                  <Route path="survey/creator" element={ <SurveyCreatorPage /> }/>
+                  <Route path="survey/creator/:surveyId" element={ <SurveyCreatorPage /> }/>
+                  <Route path="survey/manage/:surveyId" element={ <SurveyManagePage /> }/>
+                  <Route path="survey/fill/:surveyId/:surveyLogId" element={ <SurveyFillPage /> }/>
+                  <Route path="survey/response/:surveyId/:surveyLogId" element={ <SurveyResponsePage /> }/>
+                  <Route path="survey/results/:surveyId" element={ <SurveyResultsPage /> }/>
+                  <Route path="air" element={ <AirStatisticsPage /> }/>
+                </Route>
               </Route>
-            </Route>
-        </Routes>
-      </AuthProvider>
-    </BrowserRouter>
+          </Routes>
+        </AuthProvider>
+      </BrowserRouter>
+    </LocalizationProvider>
   );
 }
 

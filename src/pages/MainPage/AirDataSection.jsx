@@ -1,6 +1,22 @@
-import { Box, Typography } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
+import { useEffect } from "react";
+import { Link } from "react-router-dom";
+import { getLastUserAirData } from "../../api/air";
 
 export default function AirDataSection(){
+
+    useEffect(() => {
+        fetchData();
+    }, [])
+
+    const fetchData = async () => {
+        try{
+            const result = await getLastUserAirData();
+            console.log(result);
+        }catch(error){
+            console.log(error);
+        }
+    }
     
     return(
         <Box
@@ -26,6 +42,12 @@ export default function AirDataSection(){
             </Box>
             <Box>
 
+
+                <Link to="/air">
+                    <Button>
+                        Więcej statystyk
+                    </Button>
+                </Link>
             </Box>
         </Box>
     )
