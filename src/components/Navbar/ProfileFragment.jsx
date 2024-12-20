@@ -5,6 +5,7 @@ import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { useAuth } from "../../contexts/AuthContext";
+import { Link } from "react-router-dom";
 
 
 export default function ProfileFragment(){
@@ -41,7 +42,14 @@ export default function ProfileFragment(){
                   }}
                 >
                     <MenuItem>
-                        <Button color="primary" variant="contained" fullWidth onClick={signout}>
+                        <Link to="/account">
+                            <Button color="primary" variant="contained" fullWidth>
+                            Profil
+                            </Button>
+                        </Link>
+                    </MenuItem>
+                    <MenuItem>
+                        <Button color="error" variant="contained" fullWidth onClick={signout}>
                           Wyloguj się
                         </Button>
                     </MenuItem>

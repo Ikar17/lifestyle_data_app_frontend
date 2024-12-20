@@ -16,7 +16,7 @@ const SurveyCard = ({ survey, onEdit, onManage, onResults, onFillSurvey, onViewR
         </Typography>
       </CardContent>
       <CardActions>
-        {userRole === 'ANALYST' ? (
+        {userRole === 'ANALYST' || userRole === 'ADMIN' ? (
           <>
             <Button size="small" onClick={() => onEdit(survey.survey.id)}>
               Edytuj

@@ -66,7 +66,7 @@ export default function SurveySection() {
         <Typography component="h2" variant="h5">
           Ankiety
         </Typography>
-        {userRole === 'ANALYST' ? 
+        {userRole === 'ANALYST' || userRole === 'ADMIN' ? 
             <Link to="/survey/creator">
                 <Button>Utwórz ankietę</Button>
             </Link>
