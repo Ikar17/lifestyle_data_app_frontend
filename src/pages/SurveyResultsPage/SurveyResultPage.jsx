@@ -29,7 +29,7 @@ const SurveyResultsPage = () => {
     if (loading) {
         return (
             <Container maxWidth="md" sx={{ mt: 4, display: 'flex', justifyContent: 'center' }}>
-                <CircularProgress />
+                <CircularProgress color="primary" />
             </Container>
         );
     }
@@ -37,36 +37,40 @@ const SurveyResultsPage = () => {
     if (error) {
         return (
             <Container maxWidth="md" sx={{ mt: 4 }}>
-                <Alert severity="error">{error}</Alert>
+                <Alert severity="error" sx={{ borderRadius: 2, fontWeight: 'bold' }}>
+                    {error}
+                </Alert>
             </Container>
         );
     }
 
     return (
         <Container maxWidth="lg" sx={{ mt: 4 }}>
-            <Typography variant="h4" sx={{ mb: 4, textAlign: 'center' }}>
+            <Typography variant="h4" sx={{ mb: 4, textAlign: 'center', fontWeight: 'bold', color: 'primary.main' }}>
                 Przegląd rezultatów: {results?.title}
             </Typography>
 
             <Grid container spacing={4}>
                 <Grid item xs={12} sm={6}>
-                    <Card sx={{ boxShadow: 3 }}>
+                    <Card sx={{ boxShadow: 3, borderRadius: 2 }}>
                         <CardContent>
-                            <Typography variant="h5" sx={{ mb: 2 }}>Statystyki ogólne</Typography>
-                            <Typography>Liczba niewypełnionych ankiet: {results?.sentCount}</Typography>
-                            <Typography>Liczba wypełnionych ankiet: {results?.completeCount}</Typography>
+                            <Typography variant="h5" sx={{ mb: 2, fontWeight: 'bold', color: 'primary.dark' }}>Statystyki ogólne</Typography>
+                            <Typography sx={{ mb: 1 }}>Liczba niewypełnionych ankiet: <strong>{results?.sentCount}</strong></Typography>
+                            <Typography>Liczba wypełnionych ankiet: <strong>{results?.completeCount}</strong></Typography>
                         </CardContent>
                     </Card>
                 </Grid>
 
                 <Grid item xs={12}>
-                    <Card sx={{ boxShadow: 3 }}>
+                    <Card sx={{ boxShadow: 3, borderRadius: 2 }}>
                         <CardContent>
-                            <Typography variant="h5" sx={{ mb: 2 }}>Statystyki szczegółowe</Typography>
+                            <Typography variant="h5" sx={{ mb: 2, fontWeight: 'bold', color: 'primary.dark' }}>Statystyki szczegółowe</Typography>
                             <Divider sx={{ mb: 2 }} />
                             {results?.questions.map((item, index) => (
                                 <Box key={index} sx={{ mb: 4 }}>
-                                    <Typography variant="h6" sx={{ fontWeight: 'bold' }}>Pytanie nr {index+1}: {item.question}</Typography>
+                                    <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'text.primary' }}>
+                                        Pytanie nr {index + 1}: {item.question}
+                                    </Typography>
                                     {item.questionType === 'TEXT' ? (
                                         <OpenAnswersList data={item.results} />
                                     ) : (

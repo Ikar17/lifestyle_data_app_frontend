@@ -19,6 +19,10 @@ export default function NavbarMobile(){
       setOpen(newOpen);
     };
 
+    const signout = () => {
+      auth.logout();
+    }
+
     return(
         <>
           { auth.token === "" ? 
@@ -66,7 +70,73 @@ export default function NavbarMobile(){
                 </Drawer>
               </Box>
             :
-            <></>
+            <Box sx={{ display: { xs: 'flex', md: 'none' }, gap: 1 }}>
+                <IconButton aria-label="Menu button" onClick={toggleDrawer(true)}>
+                  <MenuIcon />
+                </IconButton>
+                <Drawer
+                  anchor="top"
+                  open={open}
+                  onClose={toggleDrawer(false)}
+                  PaperProps={{
+                    sx: {
+                      top: 'var(--template-frame-height, 0px)',
+                    },
+                  }}
+                >
+                  <Box sx={{ p: 2, backgroundColor: 'background.default' }}>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'flex-end',
+                    }}
+                  >
+                  <IconButton onClick={toggleDrawer(false)}>
+                    <CloseRoundedIcon />
+                  </IconButton>
+                  </Box>
+                  <MenuItem>
+                    <Link to="/account">
+                        <Button color="primary" variant="contained" fullWidth>
+                            Profil
+                        </Button>
+                    </Link>
+                  </MenuItem>
+                  <Divider sx={{ my: 3 }} />
+                    <MenuItem>
+                      <Link to="/dashboard">
+                        <Button color="primary" variant="outlined">
+                          Strona główna
+                        </Button>
+                      </Link>
+                    </MenuItem>
+                    <MenuItem >
+                      <Link to="/air" >
+                        <Button color="primary" variant="outlined">
+                          Stan powietrza
+                        </Button>
+                      </Link> 
+                    </MenuItem>
+                    {auth.role === "ADMIN" ? 
+                      <MenuItem>
+                        <Link to="/users">
+                          <Button color="primary" variant="outlined">
+                            Użytkownicy
+                          </Button>
+                        </Link>
+                      </MenuItem>
+                    :
+                      <></>
+                    }
+                    <Divider sx={{ my: 3 }} />
+                    <MenuItem>
+                      <Button color="error" variant="contained" onClick={signout}>
+                          Wyloguj się
+                      </Button>
+                    </MenuItem>
+                  </Box>
+                </Drawer>
+              </Box>
           }
           </>  
     )

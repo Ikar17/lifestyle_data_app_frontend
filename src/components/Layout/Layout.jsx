@@ -3,12 +3,15 @@ import { Outlet } from "react-router-dom";
 import { Box } from "@mui/material";
 import Footer from "../Footer/Footer";
 
-export default function Layout(){
+export default function Layout() {
     return (
         <Box 
             sx={{
-                bgcolor: '#dad7cd',
+                background: 'linear-gradient(to right, #e0f7fa, #b2ebf2)',
                 minHeight: "100vh",
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between'
             }}
         >
             <Navbar />
@@ -16,4 +19,4 @@ export default function Layout(){
             <Footer />
         </Box>
     )
-} 
+}

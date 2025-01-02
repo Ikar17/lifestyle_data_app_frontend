@@ -5,7 +5,7 @@ import Toolbar from '@mui/material/Toolbar';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import NavbarMobile from './NavbarMobile';
-import { Typography } from '@mui/material';
+import { MenuItem, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
 import PollIcon from '@mui/icons-material/Poll';
 import ProfileFragment from './ProfileFragment';
@@ -13,16 +13,21 @@ import { useAuth } from '../../contexts/AuthContext';
 
 
 export default function Navbar() {
-
   const auth = useAuth();
 
   return (
-    <AppBar position='sticky' >
+    <AppBar
+      position='sticky'
+      sx={{
+        background: 'linear-gradient(to right, #1976d2, #2196f3)', 
+        boxShadow: 4,
+      }}
+    >
       <Container 
         maxWidth='lg'
         sx={{
           display: 'flex',
-          minHeight: '10vh'
+          minHeight: '10vh',
         }}
       >
         <Toolbar
@@ -32,57 +37,100 @@ export default function Navbar() {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            backgroundColor: 'transparent'
-            }}
+          }}
         >
-            <Box sx={{ display: "flex", gap: 5}}>
-              <Link to="/">
-                  <Box sx={{ display: "flex", gap: 1, alignItems: "center", color: "white"}}>
-                    <PollIcon />
-                    <Typography variant="h5" >
-                      LifestyleData
-                    </Typography>
-                  </Box>
-              </Link>    
-            </Box>
-            <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 2 }}>
-              { auth.token === "" ?
-                  <>
-                    <Link to="/login">
-                      <Button
-                        color="info"
-                        variant="contained"
-                          sx={{
-                            gap: 1
-                          }}
-                        >
-                          Zaloguj się
-                      </Button>
-                  </Link>
-                  <Link to="/register">
-                    <Button
-                      color="info"
-                      variant="contained"
-                        sx={{
-                          gap: 1
-                        }}
-                      >
-                        Zarejestruj się
-                    </Button>
-                  </Link>
-                  </>
-              :
-                 <></>
-              }
-            </Box>
-            
-            <ProfileFragment />
+          <Box sx={{ display: "flex", gap: 5 }}>
+            <Link to="/" style={{ textDecoration: 'none' }}>
+              <Box
+                sx={{
+                  display: "flex",
+                  gap: 1,
+                  alignItems: "center",
+                  color: "white",
+                  transition: 'color 0.3s',
+                  '&:hover': {
+                    color: '#ffeb3b',
+                  }
+                }}
+              >
+                <PollIcon fontSize='large' />
+                <Typography variant="h5" fontWeight='bold'>
+                  LifestyleData
+                </Typography>
+              </Box>
+            </Link>    
+          </Box>
 
-            {/*mobile version*/}
-            <NavbarMobile />
-                    
-          </Toolbar>
+          <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 3, alignItems: "center" }}>
+            {auth.token === "" ? (
+              <>
+                <Link to="/login" style={{ textDecoration: 'none' }}>
+                  <Button
+                    color="info"
+                    variant="contained"
+                    sx={{
+                      borderRadius: 8,
+                      textTransform: 'none',
+                      px: 3,
+                      boxShadow: 3,
+                      '&:hover': {
+                        backgroundColor: 'info.dark',
+                      },
+                    }}
+                  >
+                    Zaloguj się
+                  </Button>
+                </Link>
+                <Link to="/register" style={{ textDecoration: 'none' }}>
+                  <Button
+                    color="secondary"
+                    variant="contained"
+                    sx={{
+                      borderRadius: 8,
+                      textTransform: 'none',
+                      px: 3,
+                      boxShadow: 3,
+                      '&:hover': {
+                        backgroundColor: 'secondary.dark',
+                      },
+                    }}
+                  >
+                    Zarejestruj się
+                  </Button>
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link to="/dashboard" style={{ textDecoration: 'none' }}>
+                  <MenuItem sx={{ color: "white", fontWeight: 'bold', '&:hover': { color: '#ffeb3b' } }}>
+                    Strona główna
+                  </MenuItem>
+                </Link>
+                <Link to="/air" style={{ textDecoration: 'none' }}>
+                  <MenuItem sx={{ color: "white", fontWeight: 'bold', '&:hover': { color: '#ffeb3b' } }}>
+                    Stan powietrza
+                  </MenuItem>
+                </Link>
+                {auth.role === "ADMIN" ? 
+                  <Link to="/users" style={{ textDecoration: 'none' }}>
+                    <MenuItem sx={{ color: "white", fontWeight: 'bold', '&:hover': { color: '#ffeb3b' } }}>
+                      Użytkownicy
+                    </MenuItem>
+                  </Link>
+                  :
+                  <></>
+                }
+              </>
+            )}
+
+            <ProfileFragment />
+          </Box>
+
+          {/* wersja mobilna */}
+          <NavbarMobile />
+
+        </Toolbar>
       </Container>
     </AppBar>
-    )
+  )
 }

@@ -41,10 +41,11 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('role');
   };
 
-  const injectToken = (token) => {
+  const injectToken = async (token) => {
     if(token == null) return;
     setToken(token);
     localStorage.setItem("token", token)
+    localStorage.setItem("role", "USER");
   }
 
   return (

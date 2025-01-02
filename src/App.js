@@ -17,6 +17,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import 'dayjs/locale/pl';
 import UserProfile from './pages/AccountPage/UserProfile';
+import UserManagementPage from './pages/UserManagementPage/UserManagementPage';
 
 function App() {
   return (
@@ -38,6 +39,7 @@ function App() {
                   <Route path="survey/results/:surveyId" element={ <SurveyResultsPage /> }/>
                   <Route path="air" element={ <AirStatisticsPage /> }/>
                   <Route path="account" element={ <UserProfile /> }/>
+                  <Route path="users" element={ <UserManagementPage /> }/>
                 </Route>
               </Route>
           </Routes>

@@ -1,9 +1,12 @@
 import { Box, Button, Typography } from "@mui/material";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { getLastUserAirData } from "../../api/air";
+import AirQualityCard from "./AirQualityCard";
 
 export default function AirDataSection(){
+
+    const [data, setData] = useState(null);
 
     useEffect(() => {
         fetchData();
@@ -12,6 +15,7 @@ export default function AirDataSection(){
     const fetchData = async () => {
         try{
             const result = await getLastUserAirData();
+            setData(result);
             console.log(result);
         }catch(error){
             console.log(error);
@@ -24,28 +28,14 @@ export default function AirDataSection(){
                 width: '100%',
                 minHeight: '30vh',
                 mt: '20px',
-                boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
             }}
         >
-            <Box
-                sx={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    bgcolor: 'white',
-                    p: '10px',
-                    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
-                }}
-            >
-                <Typography component="h2" variant="h5">
-                    Jakość powietrza
-                </Typography>
-            </Box>
             <Box>
-
+                <AirQualityCard data={data}/>
 
                 <Link to="/air">
-                    <Button>
-                        Więcej statystyk
+                    <Button variant="outlined">
+                        Więcej statystyk o jakości powietrza
                     </Button>
                 </Link>
             </Box>

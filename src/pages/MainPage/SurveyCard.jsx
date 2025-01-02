@@ -1,23 +1,32 @@
-import React from 'react';
-import { Card, CardContent, CardActions, Typography, Button, Grid } from '@mui/material';
+import React from "react";
+import { Card, CardContent, CardActions, Typography, Button, Box } from "@mui/material";
 
 const SurveyCard = ({ survey, onEdit, onManage, onResults, onFillSurvey, onViewResponses, userRole }) => {
   return (
-    <Card variant="outlined" sx={{ padding: 2 }}>
+    <Card
+      variant="outlined"
+      sx={{
+        transition: "0.3s",
+        '&:hover': {
+          boxShadow: 6,
+        },
+        borderRadius: 3,
+      }}
+    >
       <CardContent>
-        <Typography variant="h5" component="div">
+        <Typography variant="h6" component="div" gutterBottom>
           {survey.survey.title}
         </Typography>
-        <Typography color="text.secondary" sx={{ marginBottom: 1.5 }}>
+        <Typography color="text.secondary" sx={{ marginBottom: 1 }}>
           Utworzono: {new Date(survey.survey.createdAt).toLocaleDateString()}
         </Typography>
         <Typography color="text.secondary">
           Autor: {survey.author.name + " " + survey.author.surname}
         </Typography>
       </CardContent>
-      <CardActions>
-        {userRole === 'ANALYST' || userRole === 'ADMIN' ? (
-          <>
+      <CardActions sx={{ justifyContent: "space-between", p: 2 }}>
+        {userRole === "ANALYST" || userRole === "ADMIN" ? (
+          <Box>
             <Button size="small" onClick={() => onEdit(survey.survey.id)}>
               Edytuj
             </Button>
@@ -27,19 +36,23 @@ const SurveyCard = ({ survey, onEdit, onManage, onResults, onFillSurvey, onViewR
             <Button size="small" onClick={() => onResults(survey.survey.id)}>
               Rezultaty
             </Button>
-          </>
+          </Box>
+        ) : survey.surveyLog && survey.surveyLog.status === "COMPLETE" ? (
+          <Button
+            size="small"
+            variant="contained"
+            onClick={() => onViewResponses(survey.survey.id, survey.surveyLog.id)}
+          >
+            Zobacz odpowiedzi
+          </Button>
         ) : (
-          <>
-            {survey.surveyLog && survey.surveyLog.status === 'COMPLETE' ? (
-              <Button size="small" onClick={() => onViewResponses(survey.survey.id, survey.surveyLog.id)}>
-                Zobacz swoje odpowiedzi
-              </Button>
-            ) : (
-              <Button size="small" onClick={() => onFillSurvey(survey.survey.id, survey.surveyLog.id)}>
-                Wypełnij ankietę
-              </Button>
-            )}
-          </>
+          <Button
+            size="small"
+            variant="contained"
+            onClick={() => onFillSurvey(survey.survey.id, survey.surveyLog.id)}
+          >
+            Wypełnij ankietę
+          </Button>
         )}
       </CardActions>
     </Card>

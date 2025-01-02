@@ -9,9 +9,9 @@ export async function getUserDetails(){
     if (!token) {
       throw new Error("Brak autoryzacji");
     }
-
-    console.log(token)
   
+    console.log(token);
+    
     try {
       const response = await axios.get(`${BACKEND_URL}/auth/details`, {
         headers: {

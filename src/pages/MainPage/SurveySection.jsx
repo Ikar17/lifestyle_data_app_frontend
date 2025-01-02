@@ -1,4 +1,4 @@
-import { Box, Button, Grid, Typography } from "@mui/material";
+import { Box, Button, Grid, Typography, Paper, Divider } from "@mui/material";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { getMySurveys } from "../../api/survey";
@@ -7,7 +7,7 @@ import { useAuth } from "../../contexts/AuthContext";
 
 export default function SurveySection() {
   const [surveys, setSurveys] = useState([]);
-  const [userRole, setUserRole] = useState("USER"); 
+  const [userRole, setUserRole] = useState("USER");
   const navigate = useNavigate();
   const auth = useAuth();
 
@@ -46,38 +46,45 @@ export default function SurveySection() {
   };
 
   return (
-    <Box
+    <Paper
+      elevation={3}
       sx={{
         width: "100%",
         minHeight: "30vh",
         mt: "20px",
-        boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+        borderRadius: 3,
+        overflow: "hidden",
       }}
     >
       <Box
         sx={{
           display: "flex",
           justifyContent: "space-between",
-          bgcolor: "white",
-          p: "10px",
-          boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+          alignItems: "center",
+          bgcolor: "primary.main",
+          color: "white",
+          p: 2,
         }}
       >
         <Typography component="h2" variant="h5">
           Ankiety
         </Typography>
-        {userRole === 'ANALYST' || userRole === 'ADMIN' ? 
-            <Link to="/survey/creator">
-                <Button>Utwórz ankietę</Button>
-            </Link>
-            :
-            ""
-        }
+        {userRole === "ANALYST" || userRole === "ADMIN" ? (
+          <Link to="/survey/creator" style={{ textDecoration: "none" }}>
+            <Button variant="contained" color="secondary">
+              Utwórz ankietę
+            </Button>
+          </Link>
+        ) : (
+          ""
+        )}
       </Box>
 
-      <Box>
+      <Divider />
+
+      <Grid container spacing={2} sx={{ p: 3 }}>
         {surveys.map((survey, index) => (
-          <Box key={index} style={{ width: "calc(100% - 10px)", padding: "10px" }}>
+          <Grid item xs={12} sm={6} md={4} key={index}>
             <SurveyCard
               survey={survey}
               onEdit={handleEdit}
@@ -87,9 +94,9 @@ export default function SurveySection() {
               onViewResponses={handleViewResponses}
               userRole={userRole}
             />
-          </Box>
+          </Grid>
         ))}
-      </Box>
-    </Box>
+      </Grid>
+    </Paper>
   );
 }

@@ -1,22 +1,25 @@
 
-import { Container, Typography } from "@mui/material";
+import { Box, Container, Divider, Typography } from "@mui/material";
 
-export default function Footer(){
-    return(
-        <Container 
-            maxWidth="lg"
-            sx = {{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                height: "14vh",
-                gap: "2px"
+export default function Footer() {
+    return (
+        <Box
+            component="footer"
+            sx={{
+                bgcolor: 'primary.dark',
+                color: 'primary.contrastText',
+                py: 3,
+                mt: 4,
+                textAlign: 'center'
             }}
         >
-            <Typography variant="body2" color="text.secondary" align="center">
-                {'Copyright © LifestyleData '}
-                {new Date().getFullYear()}
-            </Typography>
-        </Container>
-    )
+            <Container maxWidth="lg">
+                <Divider sx={{ bgcolor: 'primary.contrastText', mb: 2 }} />
+                <Typography variant="body2">
+                    {'Copyright © LifestyleData '}
+                    {new Date().getFullYear()}
+                </Typography>
+            </Container>
+        </Box>
+    );
 }
