@@ -78,3 +78,85 @@ export async function deleteUserAccount(){
       throw new Error("Problem z usuwaniem konta. Spróbuj ponownie później.");
     }
 }
+
+export async function getUsers(page, size, sortEmail, sortRole){
+
+  const token = localStorage.getItem("token");
+  if (!token) {
+    throw new Error("Brak autoryzacji");
+  }
+
+  if(page == null) page = 0;
+  if(size == null) size = 5;
+  
+  try {
+    const response = await axios.get(`${BACKEND_URL}/auth/users`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      params: {
+        page: page,
+        size: size,
+        sortEmail: sortEmail,
+        sortRole: sortRole
+    }
+    })
+    return response.data;
+
+  } catch (error) {
+    throw new Error("Problem z pobraniem danych użytkownika. Spróbuj ponownie później.");
+  }
+}
+
+export async function deleteUserAccountByUID(uid){
+  if(uid == null) return;
+
+  const token = localStorage.getItem("token");
+  if (!token) {
+    throw new Error("Brak autoryzacji");
+  }
+
+  try {
+    await axios.delete(`${BACKEND_URL}/auth/user`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      params: {
+        uid: uid
+    }
+    })
+    
+
+  } catch (error) {
+    throw new Error("Problem z usuwaniem konta. Spróbuj ponownie później.");
+  }
+}
+
+export async function updateUserRole(uid, newRole){
+  if(uid == null || newRole == null) return;
+
+  const token = localStorage.getItem("token");
+  if (!token) {
+    throw new Error("Brak autoryzacji");
+  }
+
+  console.log(token);
+  console.log(newRole);
+  console.log(uid);
+
+  try {
+    await axios.put(`${BACKEND_URL}/auth/role`, null, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      params: {
+        uid: uid,
+        role: newRole
+      }
+    })
+
+  } catch (error) {
+    console.log(error);
+    throw new Error("Problem z aktualizacją danych. Spróbuj ponownie później.");
+  }
+}

@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import Question from "./Question";
-import { Alert, Box, Button, Container, Snackbar, TextField, Typography } from "@mui/material";
+import { Alert, Box, Button, Container, Snackbar, TextField, Typography, Paper, IconButton, Tooltip } from "@mui/material";
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import SaveIcon from '@mui/icons-material/Save';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { createNewSurvey, getSurveyById, updateSurvey } from "../../api/survey";
 import { useParams } from "react-router-dom";
 
@@ -106,14 +109,18 @@ export default function SurveyCreatorPage(){
   return (
     <Container
         maxWidth='lg'
+        component={Paper}
+        elevation={3}
         sx={{
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            mt: '30px'
+            mt: '30px',
+            py: '20px',
+            borderRadius: '12px',
         }}
     >
-        <Typography variant="h4">
+        <Typography variant="h4" sx={{ fontWeight: 'bold', mb: '20px' }}>
             Kreator ankiety
         </Typography>
 
@@ -132,12 +139,16 @@ export default function SurveyCreatorPage(){
                 placeholder="Tytuł ankiety"
                 value={title}
                 onChange={handleTitleChange}
+                variant="outlined"
+                label="Tytuł"
             />
             <TextField
                 type="text"
                 placeholder="Opis ankiety"
                 value={description}
                 onChange={handleDescriptionChange}
+                variant="outlined"
+                label="Opis"
             />  
         </Box>
 
@@ -146,82 +157,81 @@ export default function SurveyCreatorPage(){
                 display: 'flex',
                 flexDirection: { xs: 'column', md: 'row' },
                 gap: 3,
-                my: '15px'
+                my: '20px'
             }}
         >
-            <Button 
-                color="info"
-                variant="contained" 
-                onClick={() => addQuestion('TEXT')}
-            >
-                Dodaj pytanie otwarte
-            </Button>
-            <Button 
-                color="info"
-                variant="contained" 
-                onClick={() => addQuestion('SINGLE_CHOICE')}
-            >
-                Dodaj pytanie jednokrotnego wyboru
-            </Button>
-            <Button 
-                color="info"
-                variant="contained" 
-                onClick={() => addQuestion('MULTIPLE_CHOICE')}
-            >
-                Dodaj pytanie wielokrotnego wyboru
-            </Button>
+            <Tooltip title="Dodaj pytanie otwarte">
+              <Button 
+                  color="info"
+                  variant="contained" 
+                  startIcon={<AddCircleOutlineIcon />} 
+                  onClick={() => addQuestion('TEXT')}
+              >
+                  Pytanie otwarte
+              </Button>
+            </Tooltip>
+            <Tooltip title="Dodaj pytanie jednokrotnego wyboru">
+              <Button 
+                  color="info"
+                  variant="contained" 
+                  startIcon={<AddCircleOutlineIcon />} 
+                  onClick={() => addQuestion('SINGLE_CHOICE')}
+              >
+                  Jednokrotnego wyboru
+              </Button>
+            </Tooltip>
+            <Tooltip title="Dodaj pytanie wielokrotnego wyboru">
+              <Button 
+                  color="info"
+                  variant="contained" 
+                  startIcon={<AddCircleOutlineIcon />} 
+                  onClick={() => addQuestion('MULTIPLE_CHOICE')}
+              >
+                  Wielokrotnego wyboru
+              </Button>
+            </Tooltip>
         </Box>
       
-        <Box
-            sx={{
-                width: '90%'
-            }}
-        >
+        <Box sx={{ width: '90%' }}>
             {questions.map((question, index) => (
-                <Box
-                    sx={{
-                        my:'60px'
-                    }}
-                >
-                    <Typography>Pytanie { index + 1}</Typography>
+                <Box sx={{ my: '40px' }} key={question.id}>
+                    <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                        Pytanie {index + 1}
+                    </Typography>
                     <Question
-                    key={question.id}
-                    question={question}
-                    updateQuestion={updateQuestion}
-                    removeQuestion={removeQuestion}
+                        question={question}
+                        updateQuestion={updateQuestion}
+                        removeQuestion={removeQuestion}
                     />
                 </Box>
-                
             ))}
         </Box>
       
-
-        {questions.length !== 0 ?
+        {questions.length !== 0 && (
             <Button 
-                color="info"
+                color="success"
                 variant="contained" 
+                startIcon={<SaveIcon />} 
                 onClick={() => sendData()}
             >
                 Zapisz ankietę
             </Button>
-            : null 
-        }
+        )}
 
         <Snackbar
-            open={ snackbarStatus }
-            autoHideDuration={ 6000 }
-            onClose={ closeSnackbar }
+            open={snackbarStatus}
+            autoHideDuration={6000}
+            onClose={closeSnackbar}
         >
             <Alert
-                onClose={ closeSnackbar }
-                severity= { snackbarType }
+                onClose={closeSnackbar}
+                severity={snackbarType}
                 variant="filled"
                 sx={{ width: '100%' }}
             >
-                { snackbarInfo }
+                {snackbarInfo}
             </Alert>
         </Snackbar>
-      
     </Container>
   );
-};
+}

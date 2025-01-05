@@ -1,6 +1,8 @@
 import React from 'react';
 import AnswerOption from './AnswerOption';
-import { Box, Button, TextField, Typography } from '@mui/material';
+import { Box, Button, TextField, Typography, IconButton, Paper, Tooltip } from '@mui/material';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 const Question = ({ question, updateQuestion, removeQuestion }) => {
   const handleTextChange = (e) => {
@@ -25,22 +27,29 @@ const Question = ({ question, updateQuestion, removeQuestion }) => {
   };
 
   return (
-    <Box>
+    <Paper 
+      elevation={3}
+      sx={{
+        p: 3,
+        borderRadius: '12px',
+        backgroundColor: '#f9f9f9',
+        mb: 3,
+      }}
+    >
       <TextField
         type="text"
         placeholder="Treść pytania"
         value={question.text}
         onChange={handleTextChange}
-        sx={{
-            width: '100%',
-            mb: "8px"
-        }}
-        variant="filled"
+        fullWidth
+        variant="outlined"
+        label="Treść pytania"
+        sx={{ mb: 2 }}
       />
 
-      {question.type === 'SINGLE_CHOICE' || question.type === 'MULTIPLE_CHOICE' ? (
+      {(question.type === 'SINGLE_CHOICE' || question.type === 'MULTIPLE_CHOICE') && (
         <Box>
-          <Typography variant='h6'>Opcje odpowiedzi:</Typography>
+          <Typography variant='subtitle1' sx={{ mb: 1 }}>Opcje odpowiedzi:</Typography>
           {question.options.map((option, index) => (
             <AnswerOption
               key={index}
@@ -50,26 +59,27 @@ const Question = ({ question, updateQuestion, removeQuestion }) => {
               removeOption={removeOption}
             />
           ))}
-            <Button 
-                onClick={addOption}
-                variant='outlined'
-                sx={{
-                    mb: "15px"
-                }}
-            >
-                Dodaj opcję
-            </Button>
+          <Button 
+            onClick={addOption}
+            variant='outlined'
+            startIcon={<AddCircleOutlineIcon />}
+            sx={{ mt: 2 }}
+          >
+            Dodaj opcję
+          </Button>
         </Box>
-      ) : null}
+      )}
 
-        <Button 
-            onClick={() => removeQuestion(question.id)} 
-            color="error"
-            variant="contained"
+      <Tooltip title="Usuń pytanie">
+        <IconButton
+          onClick={() => removeQuestion(question.id)} 
+          color="error"
+          sx={{ mt: 2 }}
         >
-            Usuń pytanie
-        </Button>
-    </Box>
+          <DeleteIcon />
+        </IconButton>
+      </Tooltip>
+    </Paper>
   );
 };
 
