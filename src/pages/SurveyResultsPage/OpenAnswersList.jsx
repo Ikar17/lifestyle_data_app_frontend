@@ -1,4 +1,5 @@
-import { List, ListItem, ListItemText, Typography, Divider, Box } from '@mui/material';
+import { List, ListItem, ListItemText, Typography, Divider, Box, Paper, ListItemIcon } from '@mui/material';
+import CommentIcon from '@mui/icons-material/Comment';
 
 const OpenAnswersList = ({ data }) => {
     if (!data || data.length === 0) {
@@ -12,30 +13,42 @@ const OpenAnswersList = ({ data }) => {
     }
 
     return (
-        <List
-            sx={{
-                width: '100%',
-                bgcolor: 'background.paper',
-                borderRadius: '8px',
-                boxShadow: 3,
-                my: 2,
+        <Paper 
+            elevation={3} 
+            sx={{ 
+                p: 2, 
+                borderRadius: 4, 
+                my: 3,
+                maxHeight: 400,  
+                overflowY: 'auto'  
             }}
         >
-            {data.map((item, index) => (
-                <div key={index}>
-                    <ListItem>
-                        <ListItemText 
-                            primary={item.answer} 
-                            primaryTypographyProps={{ 
-                                variant: 'body1', 
-                                color: 'textPrimary' 
-                            }} 
-                        />
-                    </ListItem>
-                    {index < data.length - 1 && <Divider />} {/* Dzieli tylko między elementami */}
-                </div>
-            ))}
-        </List>
+            <List
+                sx={{
+                    width: '100%',
+                    bgcolor: 'background.paper',
+                }}
+            >
+                {data.map((item, index) => (
+                    <div key={index}>
+                        <ListItem sx={{ py: 2 }}>
+                            <ListItemIcon>
+                                <CommentIcon color="primary" />
+                            </ListItemIcon>
+                            <ListItemText 
+                                primary={item.answer} 
+                                primaryTypographyProps={{ 
+                                    variant: 'body1', 
+                                    color: 'text.primary',
+                                    fontWeight: 500
+                                }} 
+                            />
+                        </ListItem>
+                        {index < data.length - 1 && <Divider component="li" />}
+                    </div>
+                ))}
+            </List>
+        </Paper>
     );
 };
 

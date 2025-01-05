@@ -1,9 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Typography, CircularProgress, Box, Card, CardContent, Grid, Alert, Divider } from '@mui/material';
+import { Container, Typography, CircularProgress, Box, Card, CardContent, Grid, Alert, Divider, Button, Paper } from '@mui/material';
 import { useParams } from 'react-router-dom';
-import { getSurveyResults } from '../../api/survey';
+import { downloadCSVFile, getSurveyResults} from '../../api/survey';
 import OpenAnswersList from './OpenAnswersList'; 
 import Chart from './Chart'; 
+import PollIcon from '@mui/icons-material/Poll';
+import BarChartIcon from '@mui/icons-material/BarChart';
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import QuizIcon from '@mui/icons-material/Quiz';
 
 const SurveyResultsPage = () => {
     const [results, setResults] = useState(null);
@@ -26,6 +30,14 @@ const SurveyResultsPage = () => {
         }
     };
 
+    const getCSVFile = () => {
+        try{
+            downloadCSVFile(surveyId);
+        }catch(error){
+            console.log(error);
+        }
+    }
+
     if (loading) {
         return (
             <Container maxWidth="md" sx={{ mt: 4, display: 'flex', justifyContent: 'center' }}>
@@ -45,44 +57,98 @@ const SurveyResultsPage = () => {
     }
 
     return (
-        <Container maxWidth="lg" sx={{ mt: 4 }}>
-            <Typography variant="h4" sx={{ mb: 4, textAlign: 'center', fontWeight: 'bold', color: 'primary.main' }}>
-                Przegląd rezultatów: {results?.title}
-            </Typography>
-
-            <Grid container spacing={4}>
-                <Grid item xs={12} sm={6}>
-                    <Card sx={{ boxShadow: 3, borderRadius: 2 }}>
-                        <CardContent>
-                            <Typography variant="h5" sx={{ mb: 2, fontWeight: 'bold', color: 'primary.dark' }}>Statystyki ogólne</Typography>
-                            <Typography sx={{ mb: 1 }}>Liczba niewypełnionych ankiet: <strong>{results?.sentCount}</strong></Typography>
-                            <Typography>Liczba wypełnionych ankiet: <strong>{results?.completeCount}</strong></Typography>
-                        </CardContent>
-                    </Card>
-                </Grid>
-
-                <Grid item xs={12}>
-                    <Card sx={{ boxShadow: 3, borderRadius: 2 }}>
-                        <CardContent>
-                            <Typography variant="h5" sx={{ mb: 2, fontWeight: 'bold', color: 'primary.dark' }}>Statystyki szczegółowe</Typography>
-                            <Divider sx={{ mb: 2 }} />
+        <Container maxWidth="lg" sx={{ mt: 6 }}>
+            <Paper elevation={6} sx={{ p: 5, borderRadius: 4 }}>
+                <Typography 
+                    variant="h4" 
+                    sx={{ mb: 5, textAlign: 'center', fontWeight: 'bold', color: 'primary.main' }}
+                >
+                    Przegląd Rezultatów: {results?.title}
+                </Typography>
+    
+                <Grid container spacing={4}>
+                    {/* Karta statystyk ogólnych */}
+                    <Grid item xs={12} sm={6}>
+                        <Paper elevation={4} sx={{ borderRadius: 4, p: 3 }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                                <BarChartIcon 
+                                    color="primary" 
+                                    sx={{ fontSize: 32, mr: 2 }} 
+                                />
+                                <Typography 
+                                    variant="h5" 
+                                    sx={{ fontWeight: 'bold', color: 'primary.dark' }}
+                                >
+                                    Statystyki Ogólne
+                                </Typography>
+                            </Box>
+                            <Typography sx={{ mb: 1 }}>
+                                Wysłane ankiety: <strong>{results?.sentCount}</strong>
+                            </Typography>
+                            <Typography>
+                                Wypełnione ankiety: <strong>{results?.completeCount}</strong>
+                            </Typography>
+                        </Paper>
+                    </Grid>
+    
+                    {/* Karta statystyk szczegółowych */}
+                    <Grid item xs={12}>
+                        <Paper elevation={4} sx={{ borderRadius: 4, p: 4 }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+                                <PollIcon 
+                                    color="primary" 
+                                    sx={{ fontSize: 36, mr: 2 }} 
+                                />
+                                <Typography 
+                                    variant="h5" 
+                                    sx={{ fontWeight: 'bold', color: 'primary.dark' }}
+                                >
+                                    Statystyki Szczegółowe
+                                </Typography>
+                            </Box>
+                            <Divider sx={{ mb: 3 }} />
                             {results?.questions.map((item, index) => (
-                                <Box key={index} sx={{ mb: 4 }}>
-                                    <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'text.primary' }}>
-                                        Pytanie nr {index + 1}: {item.question}
+                                <Box key={index} sx={{ mb: 5 }}>
+                                    <Typography 
+                                        variant="h6" 
+                                        sx={{ display: "flex", alignItems: "center", mb: 1 }}
+                                    >
+                                        <QuizIcon
+                                            color="secondary" 
+                                            sx={{ fontSize: 25, mr: 1 }}
+                                        />
+                                        Pytanie {index + 1}: {item.question}
                                     </Typography>
                                     {item.questionType === 'TEXT' ? (
                                         <OpenAnswersList data={item.results} />
                                     ) : (
                                         <Chart data={item.results} />
                                     )}
-                                    <Divider sx={{ mb: 2 }} />
+                                    {index < results.questions.length - 1 && <Divider sx={{ mt: 3 }} />}
                                 </Box>
                             ))}
-                        </CardContent>
-                    </Card>
+                        </Paper>
+                    </Grid>
                 </Grid>
-            </Grid>
+    
+                {/* Przycisk pobierania CSV */}
+                <Box sx={{ display: 'flex', justifyContent: 'center', mt: 5 }}>
+                    <Button 
+                        onClick={getCSVFile} 
+                        variant="contained" 
+                        color="secondary"
+                        size="large"
+                        startIcon={<FileDownloadIcon />}
+                        sx={{ textTransform: 'none', borderRadius: 3, boxShadow: 4 }}
+                    >
+                        Pobierz wyniki (CSV)
+                    </Button>
+                </Box>
+    
+                <Typography variant="caption" sx={{ display: 'block', textAlign: 'center', mt: 2 }}>
+                    Wskazówka: Aby poprawnie używać danych w Excelu, zaimportuj plik CSV. Separatorem jest średnik (;).
+                </Typography>
+            </Paper>
         </Container>
     );
 };

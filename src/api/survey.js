@@ -178,3 +178,29 @@ export async function getSurveyResults(surveyId){
   }
   
 }
+
+export async function downloadCSVFile(surveyId){
+  
+  const token = localStorage.getItem("token");
+  if(token == null) throw new Error("Brak autoryzacji");
+
+  try{
+      const response = await axios.get(`${BACKEND_URL}/survey/results/csv/${surveyId}`, {
+          headers:{
+              "Authorization" : "Bearer " + token
+          }
+      })
+
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'wyniki_ankiet.csv');
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      
+  }catch(error){
+      throw new Error("Problem z pobraniem wyników ankiety. Spróbuj ponownie później.");
+  }
+  
+}
