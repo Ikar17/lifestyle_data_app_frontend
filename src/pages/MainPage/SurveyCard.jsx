@@ -18,7 +18,11 @@ const SurveyCard = ({ survey, onEdit, onManage, onResults, onFillSurvey, onViewR
           {survey.survey.title}
         </Typography>
         <Typography color="text.secondary" sx={{ marginBottom: 1 }}>
-          Utworzono: {new Date(survey.survey.createdAt).toLocaleDateString()}
+          {userRole === "ANALYST" || userRole === "ADMIN" ?
+              "Utworzono:  " + new Date(survey.survey.createdAt).toLocaleDateString()
+            :
+              "Otrzymano:  " + new Date(survey.surveyLog.sendAt).toLocaleDateString()
+          }
         </Typography>
         <Typography color="text.secondary">
           Autor: {survey.author.name + " " + survey.author.surname}
