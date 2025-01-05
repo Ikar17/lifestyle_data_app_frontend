@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Box, Typography, CircularProgress, List, ListItem, Container } from "@mui/material";
+import { Box, Typography, CircularProgress, List, ListItem, Container, Paper } from "@mui/material";
 import { getSurveyAnswers, getSurveyById } from "../../api/survey";
+import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
+import DoneIcon from '@mui/icons-material/Done';
+import ListAltIcon from '@mui/icons-material/ListAlt';
 
 const SurveyResponsePage = () => {
   const { surveyId, surveyLogId } = useParams(); 
@@ -53,37 +56,87 @@ const SurveyResponsePage = () => {
   };
 
   return (
-    <Container maxWidth="md" sx={{ mt: 4 }}>
-        <Typography variant="h4" sx={{ marginBottom: "20px" }}>
-            Przegląd odpowiedzi: {survey.title}
-        </Typography>
-        <List>
-            {survey.items.map((item, index) => (
-            <ListItem key={item.id} sx={{ marginBottom: "20px", borderBottom: "1px solid #ccc", display: "block" , backgroundColor: "white"}}>
-                <Typography variant="h6">{`Pytanie ${index + 1}: ${item.text}`}</Typography>
+    <Container maxWidth="md" sx={{ mt: 6 }}>
+        <Paper elevation={6} sx={{ p: 5, borderRadius: 4 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 4 }}>
+                <ListAltIcon sx={{ fontSize: 42, color: 'primary.main', mr: 2 }} />
+                <Typography variant="h4" fontWeight="bold">
+                    Przegląd odpowiedzi: {survey.title}
+                </Typography>
+            </Box>
 
-                <Box sx={{ marginTop: "10px" }}>
-                <Typography variant="subtitle1">Dostępne odpowiedzi:</Typography>
-                <Box component="ul" sx={{ margin: 0, paddingLeft: "20px", color: "#463f3a" }}>
-                    {item.options.map((option, i) => (
-                    <li key={i}>{option}</li>
-                    ))}
-                </Box>
-                </Box>
+            <List>
+                {survey.items.map((item, index) => (
+                    <Paper
+                        key={item.id}
+                        elevation={3}
+                        sx={{
+                            mb: 4,
+                            borderRadius: 3,
+                            p: 3,
+                            transition: 'all 0.3s',
+                            '&:hover': { boxShadow: 6 },
+                        }}
+                    >
+                        <ListItem
+                            sx={{
+                                display: 'block',
+                                borderBottom: '1px solid #e0e0e0',
+                                pb: 2,
+                            }}
+                        >
+                            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                                <QuestionMarkIcon sx={{ color: 'secondary.main', mr: 1 }} />
+                                <Typography variant="h6" fontWeight="medium">
+                                    {`Pytanie ${index + 1}: ${item.text}`}
+                                </Typography>
+                            </Box>
 
-                <Box sx={{ marginTop: "10px" }}>
-                <Typography variant="subtitle1">Twoja odpowiedź:</Typography>
-                {getAnswerForQuestion(item.id).map((answer, i) => (
-                    <Typography component="div" key={i} sx={{ color: "#463f3a" }} >
-                    {answer.answer}
-                    </Typography>
+                            <Box sx={{ mt: 2 }}>
+                                <Typography variant="subtitle1" fontWeight="bold">
+                                    Dostępne odpowiedzi:
+                                </Typography>
+                                <Box
+                                    component="ul"
+                                    sx={{
+                                        margin: 0,
+                                        pl: 3,
+                                        color: 'text.secondary',
+                                        listStyle: 'circle',
+                                    }}
+                                >
+                                    {item.options.map((option, i) => (
+                                        <li key={i}>{option}</li>
+                                    ))}
+                                </Box>
+                            </Box>
+
+                            <Box sx={{ mt: 3 }}>
+                                <Typography variant="subtitle1" fontWeight="bold">
+                                    Twoja odpowiedź:
+                                </Typography>
+                                {getAnswerForQuestion(item.id).map((answer, i) => (
+                                    <Box
+                                        key={i}
+                                        sx={{
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            mt: 1,
+                                            color: 'text.primary',
+                                        }}
+                                    >
+                                        <DoneIcon sx={{ color: 'success.main', mr: 1 }} />
+                                        <Typography>{answer.answer}</Typography>
+                                    </Box>
+                                ))}
+                            </Box>
+                        </ListItem>
+                    </Paper>
                 ))}
-                </Box>
-            </ListItem>
-            ))}
-        </List>
+            </List>
+        </Paper>
     </Container>
-  );
+);
 };
 
 export default SurveyResponsePage;
