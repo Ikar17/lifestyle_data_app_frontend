@@ -18,7 +18,7 @@ export async function createNewSurvey(data){
     
 }
 
-export async function getMySurveys() {
+export async function getMySurveys(page, size, sort) {
     const token = localStorage.getItem("token");
     if (!token) {
       throw new Error("Brak autoryzacji");
@@ -29,6 +29,11 @@ export async function getMySurveys() {
         headers: {
           Authorization: `Bearer ${token}`,
         },
+        params: {
+          page: page,
+          size: size,
+          sort: sort
+        }
       })
       return response.data;
 
