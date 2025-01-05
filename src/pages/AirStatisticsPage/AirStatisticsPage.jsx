@@ -1,5 +1,4 @@
-import { Alert, Container, Snackbar } from "@mui/material";
-import { LineChart } from "@mui/x-charts";
+import { Alert, Container, Snackbar, CircularProgress, Paper, Box, Typography } from "@mui/material";
 import FilterForm from "./FilterFrom";
 import { useState } from "react";
 import { getAirStatistics } from "../../api/air";
@@ -9,7 +8,8 @@ import dayjs from 'dayjs';
 const AirStatisticsPage = () => {
 
     const [data, setData] = useState([]);
-    const [dates, setDates] = useState([])
+    const [dates, setDates] = useState([]);
+    const [loading, setLoading] = useState(false);
     const [snackbarStatus, changeSnackbarStatus] = useState(false);
 
     const handleFilterChange = async (newFilters) => {
@@ -28,17 +28,20 @@ const AirStatisticsPage = () => {
             return;
         }
 
-        try{
+        try {
+            setLoading(true);
             const result = await getAirStatistics(
                 newFilters.voivodeship,
                 newFilters.district,
                 newFilters.comunne,
                 newFilters.startDate,
                 newFilters.endDate
-             )
-             processData(result);
-        }catch(error){
+            );
+            processData(result);
+        } catch (error) {
             console.log(error);
+        } finally {
+            setLoading(false);
         }
         
     };
@@ -71,34 +74,54 @@ const AirStatisticsPage = () => {
         changeSnackbarStatus(false);
     }
 
-    return(
+    return (
         <Container sx={{ marginTop: 4 }}>
+            <Paper elevation={3} sx={{ padding: 4, marginBottom: 4 }}>
+                <Typography variant="h4" sx={{ marginBottom: 3, textAlign: 'center' }}>
+                    Statystyki jakości powietrza
+                </Typography>
 
-            <FilterForm onFilterChange={handleFilterChange} />
+                <FilterForm onFilterChange={handleFilterChange} />
 
-            {data.map((item) => {
-                return(
-                    <AirQualityChart dates={dates} data={item.data} title={item.parameter}/>
-                )
-            })}
+                {loading ? (
+                    <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 4 }}>
+                        <CircularProgress />
+                    </Box>
+                ) : (
+                    data.length > 0 ? (
+                        data.map((item, index) => (
+                            <AirQualityChart
+                                key={item.parameter}
+                                dates={dates}
+                                data={item.data}
+                                title={item.parameter}
+                                color_number={index}
+                            />
+                        ))
+                    ) : (
+                        <Typography variant="h6" sx={{ textAlign: 'center', marginTop: 4 }}>
+                            Brak danych do wyświetlenia
+                        </Typography>
+                    )
+                )}
 
-            <Snackbar
-                open={ snackbarStatus }
-                autoHideDuration={ 6000 }
-                onClose={ closeSnackbar }
-            >
-                <Alert
-                    onClose={ closeSnackbar }
-                    severity='error'
-                    variant="filled"
-                    sx={{ width: '100%' }}
+                <Snackbar
+                    open={snackbarStatus}
+                    autoHideDuration={6000}
+                    onClose={closeSnackbar}
                 >
-                    Niepoprawne daty
-                </Alert>
-            </Snackbar>
-
+                    <Alert
+                        onClose={closeSnackbar}
+                        severity='error'
+                        variant="filled"
+                        sx={{ width: '100%' }}
+                    >
+                        Niepoprawne daty
+                    </Alert>
+                </Snackbar>
+            </Paper>
         </Container>
-    )
-}
+    );
+};
 
 export default AirStatisticsPage;
