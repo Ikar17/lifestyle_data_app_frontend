@@ -1,5 +1,7 @@
 import React from "react";
 import { Card, CardContent, CardActions, Typography, Button, Box } from "@mui/material";
+import EmailIcon from '@mui/icons-material/Email';
+import PersonIcon from '@mui/icons-material/Person';
 
 const SurveyCard = ({ survey, onEdit, onManage, onResults, onFillSurvey, onViewResponses, userRole }) => {
   return (
@@ -24,8 +26,13 @@ const SurveyCard = ({ survey, onEdit, onManage, onResults, onFillSurvey, onViewR
               "Otrzymano:  " + new Date(survey.surveyLog.sendAt).toLocaleDateString()
           }
         </Typography>
-        <Typography color="text.secondary">
+        <Typography color="text.secondary" sx={{display: "flex", alignItems:"center", gap: 1}}>
+          <PersonIcon />
           Autor: {survey.author.name + " " + survey.author.surname}
+        </Typography>
+        <Typography color="text.secondary" sx={{display: "flex", alignItems:"center", gap: 1}}>
+          <EmailIcon /> 
+          Kontakt: {survey.author.email}
         </Typography>
       </CardContent>
       <CardActions sx={{ justifyContent: "space-between", p: 2 }}>
