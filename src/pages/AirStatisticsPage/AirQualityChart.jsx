@@ -10,10 +10,11 @@ const AirQualityChart = ({ dates, data, title, color_number = 0 }) => {
   return (
     <Paper elevation={2} sx={{ marginTop: '20px', padding: '20px' }}>
         <Typography variant="h6" sx={{ marginBottom: 2 }}>
-            Parametr: {title}
+            Parametr: <strong>{title}</strong>
         </Typography>
         <LineChart
             xAxis={[{ scaleType: 'point', data: dates }]}
+            yAxis={[{ label: 'μg/m3'}]}
             series={[
                 {
                     data: data,

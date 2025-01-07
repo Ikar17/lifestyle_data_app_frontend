@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { MenuItem, Button, Box, InputLabel, Select, FormControl } from '@mui/material';
+import { MenuItem, Button, Box, InputLabel, Select, FormControl, Typography } from '@mui/material';
 import { getComunnes, getDistricts, getVoivodeships } from '../../api/address';
 import { DateTimePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
@@ -114,7 +114,10 @@ const FilterForm = ({ onFilterChange }) => {
                 onChange={(newValue) => setEndDate(newValue)}
             />
         </FormControl>
-      <Button variant="contained" color="primary" onClick={handleFilterChange}>Filtruj</Button>
+      <Button variant="contained" color="primary" onClick={handleFilterChange}>Wyświetl</Button>
+      <Typography variant='caption' sx={{display: "block"}}>
+        Wskazówka: Brak opcji filtrowania wyświetli dane z 3 ostatnich dni z twojego regionu.
+      </Typography>
     </Box>
   );
 };

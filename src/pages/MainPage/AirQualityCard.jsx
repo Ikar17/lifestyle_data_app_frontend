@@ -85,7 +85,7 @@ const AirQualityCard = ({ data }) => {
               sx={{ textAlign: 'center' }}
             >
               <Typography variant="body2">
-                {item.label}: <strong>{item.value}</strong>
+                {item.label}: <strong>{item.value}</strong> μg/m3
               </Typography>
             </Grid>
           ))}
