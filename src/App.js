@@ -18,12 +18,14 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import 'dayjs/locale/pl';
 import UserProfile from './pages/AccountPage/UserProfile';
 import UserManagementPage from './pages/UserManagementPage/UserManagementPage';
+import ScrollToTop from './utils/ScrollToTop';
 
 function App() {
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="pl">
       <BrowserRouter>
         <AuthProvider>
+        <ScrollToTop />
           <Routes>
               <Route path="/" element={ <Layout /> }>
                 <Route index element={ <WelcomePage /> }/>
