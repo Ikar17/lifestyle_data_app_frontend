@@ -31,6 +31,7 @@ import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import { useNavigate, useParams } from 'react-router-dom';
 import { deleteSurveySendingByDate, getSurveyById, getSurveySendingStats, removeSurveyById, sendingSurvey } from '../../api/survey';
 import { getComunnes, getDistricts, getVoivodeships } from '../../api/address';
+import dayjs from 'dayjs';
 
 const SurveyManagePage = () => {
     const [voivodeships, setVoivodeships] = useState([""]); 
@@ -138,6 +139,24 @@ const SurveyManagePage = () => {
       startDate: startDate,
       endDate: endDate
     };
+
+    if(!isOneTime){
+      if(startDate == null || endDate == null || startDate == '' || endDate == ''){
+        changeSnackbarType("error");
+        changeSnackbarInfo("Niepoprawne daty");
+        changeSnackbarStatus(true);
+        return;
+      }
+
+      const date1 = dayjs(startDate);
+      const date2 = dayjs(endDate);
+      if (date2.isBefore(date1)){
+        changeSnackbarType("error");
+        changeSnackbarInfo("Niepoprawne daty");
+        changeSnackbarStatus(true);
+        return;
+      }
+    }
 
     try{
       await sendingSurvey(payload);
