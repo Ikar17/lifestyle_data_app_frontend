@@ -3,12 +3,20 @@ import React, { useState, useEffect } from "react";
 import { 
   TextField, Button, Typography, Container, Paper, MenuItem, InputLabel, 
   FormControl, Select, Divider, Snackbar, Alert, Dialog, DialogTitle, DialogContent, 
-  DialogActions 
+  DialogActions, 
+  Box
 } from "@mui/material";
 import { changePassword, deleteUserAccount, getUserDetails, updateUserDetails } from "../../api/user";
 import { getComunnes, getDistricts, getVoivodeships } from "../../api/address";
 import { useAuth } from "../../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
+
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import LockIcon from '@mui/icons-material/Lock';
+import SaveIcon from '@mui/icons-material/Save';
+import KeyIcon from '@mui/icons-material/VpnKey';
+import DeleteIcon from '@mui/icons-material/DeleteForever';
+import WarningIcon from '@mui/icons-material/Warning';
 
 const UserProfile = () => {
 
@@ -154,153 +162,200 @@ const UserProfile = () => {
   };
 
   return (
-    <Container maxWidth="sm" sx={{marginTop: "15px"}}>
-      <Paper elevation={3} sx={{ padding: 4 }}>
-        <Typography variant="h5" gutterBottom>
-          Edytuj profil
+    <Container maxWidth="md" sx={{marginTop: 5}}>
+      <Paper elevation={4} sx={{ padding: 5, borderRadius: 3 }}>
+        <Typography 
+            variant="h4" 
+            sx={{ 
+              fontWeight: 'bold', 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center',
+              marginBottom: 4
+            }}
+          >
+            <AccountCircleIcon sx={{ fontSize: 40, marginRight: 2 }} />
+            Edytuj profil
+        </Typography>
+    
+      <Paper elevation={2} sx={{ padding: 4, marginBottom: 4, borderRadius: 2 }}>
+        <Typography variant="h6" gutterBottom>
+          Dane osobowe
         </Typography>
 
         <TextField
-            disabled
-            fullWidth
-            margin="normal"
-            label="Email"
-            value={userData.email}
+          disabled
+          fullWidth
+          margin="normal"
+          label="Email"
+          value={userData.email}
         />
 
         <TextField
-            fullWidth
-            margin="normal"
-            label="Imię"
-            name="name"
-            value={userData.name}
-            onChange={handleChange}
+          fullWidth
+          margin="normal"
+          label="Imię"
+          name="name"
+          value={userData.name}
+          onChange={handleChange}
         />
 
         <TextField
-            fullWidth
-            margin="normal"
-            label="Nazwisko"
-            name="surname"
-            value={userData.surname}
-            onChange={handleChange}
+          fullWidth
+          margin="normal"
+          label="Nazwisko"
+          name="surname"
+          value={userData.surname}
+          onChange={handleChange}
         />
 
         <TextField
-            fullWidth
-            type="date"
-            margin="normal"
-            label="Data urodzenia"
-            name="birthDate"
-            InputLabelProps={{ shrink: true }}
-            value={userData.birthDate}
-            onChange={handleChange}
+          fullWidth
+          type="date"
+          margin="normal"
+          label="Data urodzenia"
+          name="birthDate"
+          InputLabelProps={{ shrink: true }}
+          value={userData.birthDate}
+          onChange={handleChange}
         />
+        
+        {/* Adres */}
+        <Typography variant="h6" gutterBottom sx={{ marginTop: 3 }}>
+          Adres
+        </Typography>
 
         <FormControl fullWidth margin="normal">
-        <InputLabel id="voivodeship-label">Województwo</InputLabel>
-            <Select
-                labelId="voivodeship-label"
-                id="voivodeship"
-                name="voivodeship"
-                label="Województwo"
-                value={voivodeship || ''}
-                onChange={(event) => {
-                  fetchDistricts(event.target.value);
-                  setVoivodeship(event.target.value);
-                  setDistrict('');
-                  setComunne('');
-                }}
-            >
-                {voivodeships.map((voivodeship, index) => (
-                    <MenuItem key={index} value={voivodeship.name}>{voivodeship.name}</MenuItem>
-                ))}
-            </Select>
+          <InputLabel id="voivodeship-label">Województwo</InputLabel>
+          <Select
+            labelId="voivodeship-label"
+            id="voivodeship"
+            name="voivodeship"
+            value={voivodeship || ''}
+            onChange={(event) => {
+              fetchDistricts(event.target.value);
+              setVoivodeship(event.target.value);
+              setDistrict('');
+              setComunne('');
+            }}
+          >
+            {voivodeships.map((voivodeship, index) => (
+              <MenuItem key={index} value={voivodeship.name}>
+                {voivodeship.name}
+              </MenuItem>
+            ))}
+          </Select>
         </FormControl>
 
         <FormControl fullWidth margin="normal">
-            <InputLabel id="district-label">Powiat</InputLabel>
-                <Select
-                    labelId="district-label"
-                    id="district"
-                    name="district"
-                    label="Powiat"
-                    value={district || ''}
-                    onChange={(event) => {
-                      fetchComunnes(event.target.value);
-                      setDistrict(event.target.value);
-                      setComunne('');
-                    }}
-                >
-                    {districts.map((district, index) => (
-                        <MenuItem key={index} value={district.name}>{district.name}</MenuItem>
-                    ))}
-                </Select>
+          <InputLabel id="district-label">Powiat</InputLabel>
+          <Select
+            labelId="district-label"
+            id="district"
+            name="district"
+            value={district || ''}
+            onChange={(event) => {
+              fetchComunnes(event.target.value);
+              setDistrict(event.target.value);
+              setComunne('');
+            }}
+          >
+            {districts.map((district, index) => (
+              <MenuItem key={index} value={district.name}>
+                {district.name}
+              </MenuItem>
+            ))}
+          </Select>
         </FormControl>
 
         <FormControl fullWidth margin="normal">
-                <InputLabel id="comunne-label">Gmina</InputLabel>
-                <Select
-                    labelId="comunne-label"
-                    id="comunne"
-                    name="comunne"
-                    label="Gmina"
-                    value={comunne || ''}
-                    onChange={(e) => setComunne(e.target.value)}
-                    >
-                    {comunnes.map((comunne, index) => (
-                        <MenuItem key={index} value={comunne.name}>{comunne.name}</MenuItem>
-                    ))}
-                </Select>
+          <InputLabel id="comunne-label">Gmina</InputLabel>
+          <Select
+            labelId="comunne-label"
+            id="comunne"
+            name="comunne"
+            value={comunne || ''}
+            onChange={(e) => setComunne(e.target.value)}
+          >
+            {comunnes.map((comunne, index) => (
+              <MenuItem key={index} value={comunne.name}>
+                {comunne.name}
+              </MenuItem>
+            ))}
+          </Select>
         </FormControl>
 
         <FormControl fullWidth margin="normal">
-          <Button type="submit" variant="contained" color="primary" onClick={handleSubmit}>
-              Zapisz zmiany
+          <Button 
+            type="submit" 
+            variant="contained" 
+            color="primary" 
+            startIcon={<SaveIcon />}
+            onClick={handleSubmit}
+          >
+            Zapisz zmiany
           </Button>
         </FormControl>
+      </Paper>
 
-        <Divider sx={{ mb: 2 }} />
-
-        <Typography variant="h5" gutterBottom>
+      {/* Sekcja Zmiany Hasła */}
+      <Paper elevation={2} sx={{ padding: 4, marginBottom: 4, borderRadius: 2 }}>
+        <Typography 
+          variant="h6" 
+          gutterBottom
+          sx={{ display: 'flex', alignItems: 'center' }}
+        >
+          <LockIcon sx={{ marginRight: 1 }} />
           Zmień hasło
         </Typography>
 
         <TextField
-            fullWidth
-            margin="normal"
-            type="password"
-            label="Aktualne hasło"
-            value={userPassword}
-            onChange={(e) => setUserPassword(e.target.value)}
+          fullWidth
+          margin="normal"
+          type="password"
+          label="Aktualne hasło"
+          value={userPassword}
+          onChange={(e) => setUserPassword(e.target.value)}
         />
 
         <TextField
-            fullWidth
-            margin="normal"
-            type="password"
-            label="Nowe hasło"
-            value={newUserPassword}
-            onChange={(e) => setNewUserPassword(e.target.value)}
+          fullWidth
+          margin="normal"
+          type="password"
+          label="Nowe hasło"
+          value={newUserPassword}
+          onChange={(e) => setNewUserPassword(e.target.value)}
         />
         <TextField
-            fullWidth
-            margin="normal"
-            type="password"
-            label="Potwierdź nowe hasło"
-            value={userConfirmedPassword}
-            onChange={(e) => setUserConfirmedPassword(e.target.value)}
+          fullWidth
+          margin="normal"
+          type="password"
+          label="Potwierdź nowe hasło"
+          value={userConfirmedPassword}
+          onChange={(e) => setUserConfirmedPassword(e.target.value)}
         />
 
         <FormControl fullWidth margin="normal">
-          <Button type="submit" variant="contained" color="primary" onClick={handleChangePassword}>
-              Zmień hasło
+          <Button 
+            type="submit" 
+            variant="contained" 
+            color="primary"
+            startIcon={<KeyIcon />}
+            onClick={handleChangePassword}
+          >
+            Zmień hasło
           </Button>
         </FormControl>
-        
-        <Divider sx={{ mb: 2 }} />
+      </Paper>
 
-        <Typography variant="h5" gutterBottom>
+      {/* Sekcja Usuwania Konta */}
+      <Paper elevation={2} sx={{ padding: 4, borderRadius: 2 }}>
+        <Typography 
+          variant="h6" 
+          gutterBottom
+          sx={{ display: 'flex', alignItems: 'center', color: 'error.main' }}
+        >
+          <DeleteIcon sx={{ marginRight: 1 }} />
           Usuwanie konta
         </Typography>
         <FormControl fullWidth margin="normal">
@@ -308,12 +363,14 @@ const UserProfile = () => {
             type="button"
             variant="contained"
             color="error"
-            onClick={() => setDeleteModalOpen(true)} // Otwórz modal
+            startIcon={<WarningIcon />}
+            onClick={() => setDeleteModalOpen(true)}
           >
             Usuń konto
           </Button>
         </FormControl>
       </Paper>
+    </Paper>
 
       {/* Snackbar */}
       <Snackbar

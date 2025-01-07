@@ -42,7 +42,7 @@ export default function ProfileFragment(){
                   }}
                 >
                     <MenuItem>
-                        <Link to="/account">
+                        <Link to="/account" onClick={handleClose}>
                             <Button color="primary" variant="contained" fullWidth>
                             Profil
                             </Button>
