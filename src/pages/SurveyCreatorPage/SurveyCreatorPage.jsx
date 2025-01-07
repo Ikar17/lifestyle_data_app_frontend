@@ -65,6 +65,13 @@ export default function SurveyCreatorPage(){
         description,
       };
 
+      const validationFlag = validation(data);
+      if(!validationFlag){
+        changeSnackbarType("error");
+        changeSnackbarStatus(true);
+        return;
+      }
+
       let flag = true;
       if (surveyId) {
         flag = await updateSurvey(surveyId, data);
@@ -105,6 +112,32 @@ export default function SurveyCreatorPage(){
       changeSnackbarStatus(true);
     }
   };
+
+  const validation = (survey) => {
+    for (let i = 0; i < survey.items.length; i++) {
+      const element = survey.items[i];
+
+      if(element.text.length < 3){
+        changeSnackbarInfo("Treść pytania nie może być pusta.");
+        return false;
+      }
+
+      if (element.type === "SINGLE_CHOICE" || element.type === "MULTI_CHOICE") {
+        if (element.options.length < 2) {
+          changeSnackbarInfo("Pytania jedno lub wielokrotnego wyboru muszą mieć co najmniej 2 opcje.");
+          return false; 
+        }
+
+        for(let optionIndex = 0; optionIndex < element.options.length; optionIndex++){
+          if(element.options[optionIndex].length < 1){
+            changeSnackbarInfo("Treść opcji nie może być pusta.");
+            return false; 
+          }
+        }
+      }
+    }
+    return true;
+  }
 
   return (
     <Container
