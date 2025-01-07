@@ -35,9 +35,9 @@ const SurveyResponsePage = () => {
 
   if (loading) {
     return(
-        <Container maxWidth="md" sx={{ mt: 4 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 4 }}>
             <CircularProgress />
-        </Container>
+        </Box>
     ) 
   }
 

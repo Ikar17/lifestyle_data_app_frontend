@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Box, Button, Container, Typography, Radio, RadioGroup, FormControlLabel, Checkbox, Snackbar, Paper, Alert, TextField } from "@mui/material";
+import { Box, Button, Container, Typography, Radio, RadioGroup, FormControlLabel, Checkbox, Snackbar, Paper, Alert, TextField, CircularProgress } from "@mui/material";
 import { getSurveyById, sendSurveyResponse } from "../../api/survey"; 
 import { useParams, useNavigate } from "react-router-dom";
 import AssignmentIcon from '@mui/icons-material/Assignment';
@@ -187,10 +187,8 @@ export default function SurveyFillPage() {
           </Snackbar>
         </Paper>
       ) : (
-        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mt: 10 }}>
-          <Typography variant="h6" sx={{ mr: 2 }}>
-            Ładowanie ankiety...
-          </Typography>
+        <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 4 }}>
+          <CircularProgress />
         </Box>
       )}
     </Container>
