@@ -204,3 +204,48 @@ export async function downloadCSVFile(surveyId){
   }
   
 }
+
+export async function getSurveySendingStats(surveyId, page, size, sort){
+  
+  const token = localStorage.getItem("token");
+  if(token == null) throw new Error("Brak autoryzacji");
+
+  try{
+      const response = await axios.get(`${BACKEND_URL}/survey/stats/${surveyId}`, {
+          headers:{
+              "Authorization" : "Bearer " + token
+          },
+          params: {
+            page: page,
+            size: size,
+            sort: sort
+          }
+      })
+
+      return response.data;
+      
+  }catch(error){
+      throw new Error("Problem z pobraniem statystyk. Spróbuj ponownie później.");
+  }
+  
+}
+
+export async function deleteSurveySendingByDate(surveyId, date){
+  
+  const token = localStorage.getItem("token");
+  if(token == null) throw new Error("Brak autoryzacji");
+
+  try{
+      const response = await axios.delete(`${BACKEND_URL}/survey/stats/${surveyId}/${date}`, {
+          headers:{
+              "Authorization" : "Bearer " + token
+          }
+      })
+
+      return response.data;
+      
+  }catch(error){
+      throw new Error("Problem z pobraniem statystyk. Spróbuj ponownie później.");
+  }
+  
+}

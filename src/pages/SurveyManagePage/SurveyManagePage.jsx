@@ -1,19 +1,41 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  Container, Typography, Grid, Button, TextField, Select, MenuItem, FormControl, InputLabel, Card, CardContent, CardActions, List, ListItem, ListItemText, 
+  Container, 
+  Typography,
+  Button, 
+  TextField, 
+  Select, 
+  MenuItem, 
+  FormControl, 
+  InputLabel, 
+  Card, 
+  CardContent, 
+  CardActions, 
   FormControlLabel,
   Switch,
   Snackbar,
-  Alert
+  Alert,
+  Pagination,
+  Box,
+  Paper,
+  Dialog, 
+  DialogActions, 
+  DialogContent, 
+  DialogTitle
 } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
+import SendIcon from '@mui/icons-material/Send';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+
 import { useNavigate, useParams } from 'react-router-dom';
-import { getSurveyById, removeSurveyById, sendingSurvey } from '../../api/survey';
+import { deleteSurveySendingByDate, getSurveyById, getSurveySendingStats, removeSurveyById, sendingSurvey } from '../../api/survey';
 import { getComunnes, getDistricts, getVoivodeships } from '../../api/address';
 
 const SurveyManagePage = () => {
-    const [voivodeships, setVoivodeships] = useState([]); 
-    const [districts, setDistricts] = useState([]); 
-    const [comunnes, setComunnes] = useState([]); 
+    const [voivodeships, setVoivodeships] = useState([""]); 
+    const [districts, setDistricts] = useState([""]); 
+    const [comunnes, setComunnes] = useState([""]); 
 
     const [voivodeship, setVoivodeship] = useState('');
     const [district, setDistrict] = useState('');
@@ -28,24 +50,50 @@ const SurveyManagePage = () => {
     const [snackbarType, changeSnackbarType] = useState("error");
     const [snackbarInfo, changeSnackbarInfo] = useState("");
 
+    const [stats, setStats] = useState([]);
+    const [page, setPage] = useState(1);
+    const [totalElements, setTotalElements] = useState(0);
+
+    const [openDialog, setOpenDialog] = useState(false);
+
     const { surveyId } = useParams(); 
     const navigate = useNavigate();
 
+    const size = 5; 
 
     useEffect(() => {
         loadSurvey(surveyId);
         fetchVoivodeships();
+        loadStats(surveyId);
     }, []);
+
+    useEffect(() => {
+      loadStats(surveyId);
+    }, [page]);
 
   const loadSurvey = async (id) => {
     try {
       const result = await getSurveyById(id);
-      console.log(result)
       setSurvey(result);
     } catch (error) {
-      console.log(error);
+      changeSnackbarType("error");
+      changeSnackbarInfo("Problem z pobraniem informacji o ankiecie. Spróbuj ponownie później");
+      changeSnackbarStatus(true);
     }
   };
+
+  const loadStats = async (id) => {
+    try{
+      const results = await getSurveySendingStats(id, page-1, size);
+      console.log(results);
+      setStats(results.content);
+      setTotalElements(results.totalElements);
+    }catch(error){
+      changeSnackbarType("error");
+      changeSnackbarInfo("Problem z pobraniem statystyk wysyłek ankiet. Spróbuj ponownie później");
+      changeSnackbarStatus(true);
+    }
+  }
 
   const handleDeleteSurvey = async () => {
     try{
@@ -53,13 +101,32 @@ const SurveyManagePage = () => {
       changeSnackbarType("success");
       changeSnackbarInfo("Ankieta została usunięta");
       changeSnackbarStatus(true);
-      setTimeout(() => navigate("/"), 3000);
+      setTimeout(() => navigate("/dashboard"), 3000);
     }catch(error){
       changeSnackbarType("error");
       changeSnackbarInfo("Problem z usunięciem ankiety. Spróbuj ponownie później");
       changeSnackbarStatus(true);
     }
+
+    handleCloseDialog();
   };
+
+  const handleDeleteSending = async (date) => {
+    try{
+      await deleteSurveySendingByDate(surveyId, date);
+
+      changeSnackbarType("success");
+      changeSnackbarInfo("Ankieta dla dnia: " + date + " została usunięta");
+
+      loadStats(surveyId);
+    }catch(error){
+      changeSnackbarType("error");
+      changeSnackbarInfo("Błąd usuwania ankiety. Spróbuj ponownie później");
+    }
+    finally{
+      changeSnackbarStatus(true);
+    }
+  }
 
   const handleSendSurvey = async () => {
     const payload = {
@@ -71,8 +138,6 @@ const SurveyManagePage = () => {
       startDate: startDate,
       endDate: endDate
     };
-  
-    console.log("Wysyłanie ankiety:", payload);
 
     try{
       await sendingSurvey(payload);
@@ -82,11 +147,14 @@ const SurveyManagePage = () => {
 
       changeSnackbarType("success");
       changeSnackbarInfo("Ankieta została rozesłana.");
-      changeSnackbarStatus(true);
+
+      loadStats(surveyId);
     }catch(error){
       changeSnackbarType("error");
       changeSnackbarInfo("Błąd. Spróbuj ponownie później");
       changeSnackbarStatus(true)
+    }finally{
+      changeSnackbarStatus(true);
     }
   }
 
@@ -113,94 +181,156 @@ const SurveyManagePage = () => {
     changeSnackbarStatus(false);
   }
 
+  const handlePageChange = (e, value) => {
+    setPage(value);
+  }
+
+  const handleOpenDialog = () => {
+    setOpenDialog(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+  };
+
   return (
     <Container sx={{ marginTop: 4 }}>
-      <Typography variant="h4" gutterBottom>
-        Zarządzaj ankietą: {survey ? survey.title : "Błąd ładowania"}
-      </Typography>
-      <Typography variant="subtitle1" color="textSecondary" gutterBottom>
-        Autor: {survey ? survey.metaData.author.name + " " + survey.metaData.author.surname : ""} | Utworzono: {survey ? new Date(survey.metaData.survey.createdAt).toLocaleDateString() : ""}
-      </Typography>
+      <Paper sx={{p: 3, mb: 3, borderRadius: 4 }}>
+        <Typography 
+            variant="h4" 
+            gutterBottom 
+            sx={{ 
+              fontWeight: 'bold', 
+              textAlign: 'center',  
+              marginBottom: 2 
+            }}
+          >
+            Zarządzaj ankietą: {survey ? survey.title : "Błąd ładowania"}
+          </Typography>
 
-      {/* Sekcja Usuwania Ankiety */}
-      <Card variant="outlined" sx={{ marginBottom: 2 }}>
+          <Typography 
+            variant="subtitle1" 
+            color="textSecondary" 
+            gutterBottom 
+            sx={{ 
+              textAlign: 'center', 
+              marginBottom: 4 
+            }}
+          >
+
+            Autor: {survey ? `${survey.metaData.author.name} ${survey.metaData.author.surname}` : ""} | 
+            Utworzono: {survey ? new Date(survey.metaData.survey.createdAt).toLocaleDateString() : ""}
+      </Typography>
+    </Paper>
+
+     {/* Sekcja Usuwania Ankiety */}
+      <Card variant="outlined" sx={{ marginBottom: 3, borderRadius: 2, boxShadow: 2 }}>
         <CardContent>
-          <Typography variant="h6">Usuń ankietę</Typography>
+          <Typography variant="h6">
+            <DeleteIcon sx={{ verticalAlign: 'middle', marginRight: 1 }} />
+            Usuń ankietę
+          </Typography>
           <Typography variant="body2" color="textSecondary">
             Usunięcie ankiety jest nieodwracalne.
           </Typography>
         </CardContent>
         <CardActions>
-          <Button variant="contained" color="error" onClick={handleDeleteSurvey}>
+          <Button variant="contained" color="error" startIcon={<DeleteIcon />} onClick={handleOpenDialog}>
             Usuń ankietę
           </Button>
         </CardActions>
       </Card>
 
+      {/* Dialog potwierdzenia usunięcia ankiety */}
+      <Dialog open={openDialog} onClose={handleCloseDialog}>
+        <DialogTitle>Potwierdzenie usunięcia</DialogTitle>
+        <DialogContent>
+          <Typography variant="body2" color="textSecondary">
+            Czy na pewno chcesz usunąć tę ankietę? To działanie jest nieodwracalne.
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog} color="primary">
+            Anuluj
+          </Button>
+          <Button onClick={handleDeleteSurvey} color="error">
+            Usuń
+          </Button>
+        </DialogActions>
+      </Dialog>
+
       {/* Sekcja Wysyłania Ankiety */}
-      <Card variant="outlined" sx={{ marginBottom: 2 }}>
+      <Card variant="outlined" sx={{ marginBottom: 3, borderRadius: 2, boxShadow: 2 }}>
         <CardContent>
-          <Typography variant="h6">Wyślij ankietę</Typography>
-          <Typography variant="text">Określ grupę docelową po adresie zamieszkania</Typography>
+          <Typography variant="h6">
+            <SendIcon sx={{ verticalAlign: 'middle', marginRight: 1 }} />
+            Wyślij ankietę
+          </Typography>
+          <Typography variant="body2" color="textSecondary" gutterBottom>
+            Określ grupę docelową po adresie zamieszkania
+          </Typography>
 
           <FormControl fullWidth margin="normal">
             <InputLabel id="voivodeship-label">Województwo</InputLabel>
-                <Select
-                    labelId="voivodeship-label"
-                    id="voivodeship"
-                    name="voivodeship"
-                    label="Województwo"
-                    onChange={fetchDistricts}
-                >
-                    {voivodeships.map((voivodeship, index) => (
-                        <MenuItem key={index} value={voivodeship.name}>{voivodeship.name}</MenuItem>
-                    ))}
-                </Select>
-            </FormControl>
+            <Select
+              labelId="voivodeship-label"
+              id="voivodeship"
+              name="voivodeship"
+              label="Województwo"
+              startAdornment={<LocationOnIcon />}
+              onChange={fetchDistricts}
+            >
+              {voivodeships.map((voivodeship, index) => (
+                <MenuItem key={index} value={voivodeship.name}>{voivodeship.name}</MenuItem>
+              ))}
+            </Select>
+          </FormControl>
 
-            <FormControl fullWidth margin="normal">
-                <InputLabel id="district-label">Powiat</InputLabel>
-                <Select
-                    labelId="district-label"
-                    id="district"
-                    name="district"
-                    label="Powiat"
-                    onChange={fetchComunnes}
-                >
-                    {districts.map((district, index) => (
-                        <MenuItem key={index} value={district.name}>{district.name}</MenuItem>
-                    ))}
-                </Select>
-            </FormControl>
+          <FormControl fullWidth margin="normal">
+            <InputLabel id="district-label">Powiat</InputLabel>
+            <Select
+              labelId="district-label"
+              id="district"
+              name="district"
+              label="Powiat"
+              startAdornment={<LocationOnIcon />}
+              onChange={fetchComunnes}
+            >
+              {districts.map((district, index) => (
+                <MenuItem key={index} value={district.name}>{district.name}</MenuItem>
+              ))}
+            </Select>
+          </FormControl>
 
-            <FormControl fullWidth margin="normal">
-                <InputLabel id="comunne-label">Gmina</InputLabel>
-                <Select
-                    labelId="comunne-label"
-                    id="comunne"
-                    name="comunne"
-                    label="Gmina"
-                    onChange={(e) => setComunne(e.target.value)}
-                    >
-                    {comunnes.map((comunne, index) => (
-                        <MenuItem key={index} value={comunne.name}>{comunne.name}</MenuItem>
-                    ))}
-                </Select>
-            </FormControl>
+          <FormControl fullWidth margin="normal">
+            <InputLabel id="comunne-label">Gmina</InputLabel>
+            <Select
+              labelId="comunne-label"
+              id="comunne"
+              name="comunne"
+              label="Gmina"
+              startAdornment={<LocationOnIcon />}
+              onChange={(e) => setComunne(e.target.value)}
+            >
+              {comunnes.map((comunne, index) => (
+                <MenuItem key={index} value={comunne.name}>{comunne.name}</MenuItem>
+              ))}
+            </Select>
+          </FormControl>
 
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={isOneTime}
-                  onChange={(e) => setIsOneTime(e.target.checked)}
-                  color="primary"
-                />
-              }
-              label="Ankieta jednorazowa"
-            />
+          <FormControlLabel
+            control={
+              <Switch
+                checked={isOneTime}
+                onChange={(e) => setIsOneTime(e.target.checked)}
+                color="primary"
+              />
+            }
+            label="Ankieta jednorazowa"
+          />
 
-          <Typography variant="body2" color="text" sx={{marginBottom: 3, marginTop: 3}}>
-            Cykliczność ankiety - możesz określić przez ile dni codziennie ankieta będzie rozsyłana automatycznie (ignorowane jeśli jest zaznaczone pole ankieta jednorazowa)
+          <Typography variant="body2" color="textSecondary" sx={{ marginBottom: 3, marginTop: 3 }}>
+            Cykliczność ankiety - możesz określić przez ile dni codziennie ankieta będzie rozsyłana automatycznie
           </Typography>
           <TextField
             type="date"
@@ -210,6 +340,9 @@ const SurveyManagePage = () => {
             InputLabelProps={{ shrink: true }}
             value={startDate}
             onChange={(e) => setStartDate(e.target.value)}
+            InputProps={{
+              startAdornment: <CalendarTodayIcon sx={{ marginRight: 1 }} />
+            }}
           />
           <TextField
             type="date"
@@ -219,30 +352,95 @@ const SurveyManagePage = () => {
             InputLabelProps={{ shrink: true }}
             value={endDate}
             onChange={(e) => setEndDate(e.target.value)}
+            InputProps={{
+              startAdornment: <CalendarTodayIcon sx={{ marginRight: 1 }} />
+            }}
           />
         </CardContent>
         <CardActions>
-          <Button variant="contained" color="primary" onClick={handleSendSurvey}>
+          <Button variant="contained" color="primary" startIcon={<SendIcon />} onClick={handleSendSurvey}>
             Wyślij ankietę
           </Button>
         </CardActions>
       </Card>
 
-      <Snackbar
-            open={ snackbarStatus }
-            autoHideDuration={ 6000 }
-            onClose={ closeSnackbar }
-        >
-            <Alert
-                onClose={ closeSnackbar }
-                severity= { snackbarType }
-                variant="filled"
-                sx={{ width: '100%' }}
-            >
-                { snackbarInfo }
-            </Alert>
-        </Snackbar>
+      {/* Sekcja statystyk wysyłek */}
+  <Card variant="outlined" sx={{ marginBottom: 4, borderRadius: 2, boxShadow: 2 }}>
+  <CardContent>
+    <Typography 
+      variant="h6" 
+      sx={{ display: 'flex', alignItems: 'center' }}
+    >
+      <SendIcon sx={{ marginRight: 1, color: 'primary.main' }} />
+      Statystyki wysyłek ankiety
+    </Typography>
+    <Typography variant="caption" sx={{ display: 'block', my: 1 }}>
+      Wskazówka: Usunięcie wysyłek przeszłych lub z dnia dzisiejszego spowoduje utratę danych o wypełnionych ankietach z tych dni.
+    </Typography>
 
+    {stats.length > 0 ? (
+      stats.map((item, index) => (
+        <Card 
+            key={index} 
+            variant="outlined" 
+            sx={{ 
+              marginBottom: 2, 
+              padding: 2, 
+              display: 'flex', 
+              justifyContent: 'space-between', 
+              alignItems: 'center', 
+              borderRadius: 2,
+              backgroundColor: '#f9f9f9'
+            }}
+          >
+            <Box>
+              <Typography variant="body1">
+                <strong>Data otrzymania ankiety:</strong> {item.sendAt}
+              </Typography>
+              <Typography variant="body2" color="textSecondary">
+                <strong>Liczba wysyłek:</strong> {item.count}
+              </Typography>
+            </Box>
+            <Button 
+              variant="contained" 
+              color="error" 
+              startIcon={<DeleteIcon />} 
+              onClick={() => handleDeleteSending(item.sendAt)}
+            >
+              Usuń
+            </Button>
+          </Card>
+        ))
+      ) : (
+        <Typography variant="body2" color="textSecondary" sx={{ textAlign: 'center', marginTop: 2 }}>
+          Brak danych o wysyłkach
+        </Typography>
+      )}
+      </CardContent>
+
+      <Pagination 
+        count={Math.ceil(totalElements / size)} 
+        color="primary" 
+        sx={{ display: 'flex', justifyContent: 'center', my: 2 }}
+        onChange={handlePageChange}
+      />
+
+    </Card>
+
+      <Snackbar
+        open={snackbarStatus}
+        autoHideDuration={6000}
+        onClose={closeSnackbar}
+      >
+        <Alert
+          onClose={closeSnackbar}
+          severity={snackbarType}
+          variant="filled"
+          sx={{ width: '100%' }}
+        >
+          {snackbarInfo}
+        </Alert>
+      </Snackbar>
     </Container>
   );
 };
