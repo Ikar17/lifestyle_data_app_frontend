@@ -1,9 +1,10 @@
-import { Alert, Container, Snackbar, CircularProgress, Paper, Box, Typography } from "@mui/material";
+import { Alert, Container, Snackbar, CircularProgress, Paper, Box, Typography, Button } from "@mui/material";
 import FilterForm from "./FilterFrom";
 import { useState } from "react";
-import { getAirStatistics } from "../../api/air";
+import { downloadAirCSVFile, getAirStatistics } from "../../api/air";
 import AirQualityChart from "./AirQualityChart";
 import dayjs from 'dayjs';
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
 
 const AirStatisticsPage = () => {
 
@@ -11,6 +12,7 @@ const AirStatisticsPage = () => {
     const [dates, setDates] = useState([]);
     const [loading, setLoading] = useState(false);
     const [snackbarStatus, changeSnackbarStatus] = useState(false);
+    const [filters, setFilters] = useState({});
 
     const handleFilterChange = async (newFilters) => {
         //walidacja
@@ -38,6 +40,7 @@ const AirStatisticsPage = () => {
                 newFilters.endDate
             );
             processData(result);
+            setFilters(newFilters);
         } catch (error) {
             console.log(error);
         } finally {
@@ -74,6 +77,61 @@ const AirStatisticsPage = () => {
         changeSnackbarStatus(false);
     }
 
+    const getCSVFile = async() => {
+        try{
+            await downloadAirCSVFile(
+                filters.voivodeship,
+                filters.district,
+                filters.comunne,
+                filters.startDate,
+                filters.endDate
+            )
+        }catch(error){
+
+        }
+    }
+
+    const LoadingFragment = () => {
+        return(
+            <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 4 }}>
+                <CircularProgress />
+            </Box>
+        ) 
+    }
+
+    const CharsFragment = () => {
+        return(
+            <>
+            {data.map((item, index) => (
+                <AirQualityChart
+                    key={item.parameter}
+                    dates={dates}
+                    data={item.data}
+                    title={item.parameter}
+                    color_number={index}
+                />
+            ))}
+
+            {/* Przycisk pobierania CSV */}
+            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 5 }}>
+                <Button 
+                    onClick={getCSVFile} 
+                    variant="contained" 
+                    color="secondary"
+                    size="large"
+                    startIcon={<FileDownloadIcon />}
+                    sx={{ textTransform: 'none', borderRadius: 3, boxShadow: 4 }}
+                >
+                    Pobierz pomiary (CSV)
+                </Button>
+            </Box>
+            <Typography variant="caption" sx={{ display: 'block', textAlign: 'center', mt: 2 }}>
+                Wskazówka: Aby poprawnie używać danych w Excelu, zaimportuj plik CSV. Separatorem jest średnik (;).
+            </Typography>
+            </>
+        )
+    }
+
     return (
         <Container sx={{ marginTop: 4 }}>
             <Paper elevation={3} sx={{ padding: 4, marginBottom: 4 }}>
@@ -84,20 +142,10 @@ const AirStatisticsPage = () => {
                 <FilterForm onFilterChange={handleFilterChange} />
 
                 {loading ? (
-                    <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 4 }}>
-                        <CircularProgress />
-                    </Box>
+                    <LoadingFragment />
                 ) : (
                     data.length > 0 ? (
-                        data.map((item, index) => (
-                            <AirQualityChart
-                                key={item.parameter}
-                                dates={dates}
-                                data={item.data}
-                                title={item.parameter}
-                                color_number={index}
-                            />
-                        ))
+                        <CharsFragment />
                     ) : (
                         <Typography variant="h6" sx={{ textAlign: 'center', marginTop: 4 }}>
                             Brak danych do wyświetlenia
