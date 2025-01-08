@@ -15,7 +15,7 @@ export const AuthProvider = ({ children }) => {
     const interceptor = axios.interceptors.response.use(
       response => response,  // Przechwytywanie udanej odpowiedzi
       error => { // Przechwytywanie błędów odpowiedzi
-        if (error.response && error.response.status === 403) {
+        if (error.response && error.response.status === 401) {
           logout();
         }
         return Promise.reject(error);
