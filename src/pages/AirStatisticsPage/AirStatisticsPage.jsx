@@ -5,6 +5,7 @@ import { downloadAirCSVFile, getAirStatistics } from "../../api/air";
 import AirQualityChart from "./AirQualityChart";
 import dayjs from 'dayjs';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import AirIcon from '@mui/icons-material/Air';
 
 const AirStatisticsPage = () => {
 
@@ -140,6 +141,13 @@ const AirStatisticsPage = () => {
                 </Typography>
 
                 <FilterForm onFilterChange={handleFilterChange} />
+                <Typography variant='body1' sx={{ display: 'block'}}>
+                        <span style={{ display: 'inline-flex', alignItems: 'center', verticalAlign: 'middle' }}>
+                            <AirIcon sx={{ marginRight: 0.5 }} /> 
+                        </span>
+                        <strong>Legenda:</strong> airIndex - indeks powietrza (1 - dobry, 5 - słaby), co - tlenek węgla, nh3 - amoniak, no - tlenek azotu, no2 - dwutlenek azotu, 
+                        o3 - ozon, so2 - dwutlenek siarki, pm2_5 i pm10 - pyły zawieszone
+                </Typography>
 
                 {loading ? (
                     <LoadingFragment />
