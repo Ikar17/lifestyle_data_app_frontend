@@ -106,6 +106,11 @@ export default function Navbar() {
                     Strona główna
                   </MenuItem>
                 </Link>
+                <Link to="/dashboard/survey" style={{ textDecoration: 'none' }}>
+                  <MenuItem sx={{ color: "white", fontWeight: 'bold', '&:hover': { color: '#ffeb3b' } }}>
+                    Ankiety
+                  </MenuItem>
+                </Link>
                 <Link to="/air" style={{ textDecoration: 'none' }}>
                   <MenuItem sx={{ color: "white", fontWeight: 'bold', '&:hover': { color: '#ffeb3b' } }}>
                     Stan powietrza

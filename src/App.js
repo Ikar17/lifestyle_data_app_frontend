@@ -33,6 +33,7 @@ function App() {
                 <Route path="register" element={ <SignUpPage /> }/>
                 <Route element={ <PrivateRoute/> }>
                   <Route path="dashboard" element={ <MainPage /> }/>
+                  <Route path="/dashboard/survey" element={ <MainPage survey_section/> }/>
                   <Route path="survey/creator" element={ <SurveyCreatorPage /> }/>
                   <Route path="survey/creator/:surveyId" element={ <SurveyCreatorPage /> }/>
                   <Route path="survey/manage/:surveyId" element={ <SurveyManagePage /> }/>

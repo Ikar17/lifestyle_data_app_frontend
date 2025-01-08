@@ -27,7 +27,7 @@ export default function AirDataSection(){
         <Box
             sx={{
                 width: '100%',
-                minHeight: '30vh',
+                minHeight: '70vh',
                 mt: '20px',
             }}
         >

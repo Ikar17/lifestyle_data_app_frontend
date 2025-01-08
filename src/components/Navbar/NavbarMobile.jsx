@@ -110,6 +110,13 @@ export default function NavbarMobile(){
                         </Button>
                       </Link>
                     </MenuItem>
+                    <MenuItem>
+                      <Link to="/dashboard/survey">
+                        <Button color="primary" variant="outlined">
+                          Ankiety
+                        </Button>
+                      </Link>
+                    </MenuItem>
                     <MenuItem >
                       <Link to="/air" >
                         <Button color="primary" variant="outlined">

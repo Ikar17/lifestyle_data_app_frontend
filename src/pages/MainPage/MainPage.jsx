@@ -3,7 +3,8 @@ import SurveySection from "./SurveySection";
 import helloImage from "../../assets/hello.png"
 import AirDataSection from "./AirDataSection";
 
-export default function MainPage() {
+export default function MainPage({ survey_section }) {
+    
     return (
         <>
             <Container
@@ -35,7 +36,7 @@ export default function MainPage() {
                     </Typography>
                 </Paper>
                 <AirDataSection />
-                <SurveySection />
+                <SurveySection scroll={survey_section}/>
             </Container>
         </>
     )

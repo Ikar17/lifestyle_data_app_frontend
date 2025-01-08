@@ -1,11 +1,11 @@
 import { Box, Button, Grid, Typography, Paper, Divider, Pagination, Select, MenuItem } from "@mui/material";
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { getMySurveys } from "../../api/survey";
 import SurveyCard from "./SurveyCard";
 import { useAuth } from "../../contexts/AuthContext";
 
-export default function SurveySection() {
+export default function SurveySection({scroll}) {
   const [surveys, setSurveys] = useState([]);
   const [userRole, setUserRole] = useState("USER");
   const [page, setPage] = useState(1);
@@ -14,6 +14,8 @@ export default function SurveySection() {
   const navigate = useNavigate();
   const auth = useAuth();
   const size = 3;
+
+  const location = useLocation();
 
   useEffect(() => {
     setUserRole(auth.role);
@@ -24,6 +26,11 @@ export default function SurveySection() {
     getSurveys();
   }, [page, sort]);
 
+  useEffect(() => {
+    if (location.pathname === '/dashboard/survey') {
+      handleScrollToSurveySection();
+    }
+  }, [location]);
 
   const getSurveys = async () => {
     try {
@@ -64,17 +71,27 @@ export default function SurveySection() {
     else setSort("asc");
   }
 
+  const handleScrollToSurveySection = () => {
+    const section = document.getElementById('survey_section');
+    if (section && scroll) {
+      section.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+    })};
+  }
+
   return (
     <Paper
       elevation={3}
       sx={{
         width: "100%",
-        minHeight: "30vh",
+        minHeight: "60vh",
         mt: "20px",
         borderRadius: 3,
         overflow: "hidden",
       }}
     >
+      
       <Box
         sx={{
           display: "flex",
@@ -84,6 +101,7 @@ export default function SurveySection() {
           color: "white",
           p: 2,
         }}
+        id="survey_section"
       >
         <Typography component="h2" variant="h5">
           Ankiety
@@ -99,7 +117,7 @@ export default function SurveySection() {
         )}
       </Box>
 
-      <Divider />
+      <Divider/>
 
       <Box sx={{ px:3, pt: 3}}>
         <Select
@@ -134,7 +152,6 @@ export default function SurveySection() {
           onChange={handlePageChange}/>
       </Box>
       
-
     </Paper>
   );
 }
