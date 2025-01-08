@@ -32,6 +32,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { deleteSurveySendingByDate, getSurveyById, getSurveySendingStats, removeSurveyById, sendingSurvey } from '../../api/survey';
 import { getComunnes, getDistricts, getVoivodeships } from '../../api/address';
 import dayjs from 'dayjs';
+import { useAuth } from '../../contexts/AuthContext';
 
 const SurveyManagePage = () => {
     const [voivodeships, setVoivodeships] = useState([""]); 
@@ -59,10 +60,14 @@ const SurveyManagePage = () => {
 
     const { surveyId } = useParams(); 
     const navigate = useNavigate();
+    const auth = useAuth();
 
     const size = 5; 
 
     useEffect(() => {
+        if(auth.role !== "ADMIN" && auth.role !== "ANALYST"){
+          navigate("/");
+        }
         loadSurvey(surveyId);
         fetchVoivodeships();
         loadStats(surveyId);

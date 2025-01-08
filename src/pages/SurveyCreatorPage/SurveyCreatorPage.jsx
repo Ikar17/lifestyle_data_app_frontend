@@ -5,7 +5,8 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import SaveIcon from '@mui/icons-material/Save';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { createNewSurvey, getSurveyById, updateSurvey } from "../../api/survey";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext";
 
 export default function SurveyCreatorPage(){
   const [questions, setQuestions] = useState([]);
@@ -15,8 +16,14 @@ export default function SurveyCreatorPage(){
   const [snackbarType, changeSnackbarType] = useState("error");
   const [snackbarInfo, changeSnackbarInfo] = useState("");
   const { surveyId } = useParams(); 
+  const auth = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
+    if(auth.role !== "ADMIN" && auth.role !== "ANALYST"){
+      navigate("/");
+    }
+
     if (surveyId) {
         loadSurvey(surveyId);
     }

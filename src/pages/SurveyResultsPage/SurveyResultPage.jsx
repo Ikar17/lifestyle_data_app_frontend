@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Container, Typography, CircularProgress, Box, Card, CardContent, Grid, Alert, Divider, Button, Paper } from '@mui/material';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { downloadCSVFile, getSurveyResults} from '../../api/survey';
 import OpenAnswersList from './OpenAnswersList'; 
 import Chart from './Chart'; 
@@ -8,14 +8,20 @@ import PollIcon from '@mui/icons-material/Poll';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import QuizIcon from '@mui/icons-material/Quiz';
+import { useAuth } from '../../contexts/AuthContext';
 
 const SurveyResultsPage = () => {
     const [results, setResults] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const { surveyId } = useParams();
+    const auth = useAuth();
+    const navigate = useNavigate();
 
     useEffect(() => {
+        if(auth.role !== "ADMIN" && auth.role !== "ANALYST"){
+            navigate("/");
+          }
         fetchData();
     }, []);
 

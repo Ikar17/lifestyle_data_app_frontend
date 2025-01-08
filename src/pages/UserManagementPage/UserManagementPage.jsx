@@ -32,6 +32,8 @@ import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import PersonIcon from '@mui/icons-material/Person';
 import VerifiedUserIcon from '@mui/icons-material/VerifiedUser';
 import { deleteUserAccountByUID, getUsers, updateUserRole } from '../../api/user';
+import { useAuth } from '../../contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 const UserManagementPage = () => {
   const [users, setUsers] = useState([]);
@@ -48,8 +50,14 @@ const UserManagementPage = () => {
   const [snackbarType, changeSnackbarType] = useState("error");
   const [snackbarInfo, changeSnackbarInfo] = useState("");
 
+  const auth = useAuth();
+  const navigate = useNavigate();
+
 
   useEffect(() => {
+    if(auth.role !== "ADMIN"){
+      navigate("/");
+    }
     fetchData();
   }, [sortOrderEmail, sortOrderRole]);
 
