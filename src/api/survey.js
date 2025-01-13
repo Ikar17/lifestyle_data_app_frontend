@@ -160,7 +160,7 @@ export async function removeSurveyById(surveyId){
   
 }
 
-export async function getSurveyResults(surveyId){
+export async function getSurveyResults(surveyId, voivodeship, district, comunne, dateFrom, dateTo){
   
   const token = localStorage.getItem("token");
   if(token == null) throw new Error("Brak autoryzacji");
@@ -169,7 +169,14 @@ export async function getSurveyResults(surveyId){
       const response = await axios.get(`${BACKEND_URL}/survey/results/${surveyId}`, {
           headers:{
               "Authorization" : "Bearer " + token
-          }
+          },
+          params: {
+            voivodeship: voivodeship,
+            district: district,
+            comunne: comunne,
+            dateFrom: dateFrom,
+            dateTo: dateTo
+        }
       })
       return response.data;
       
