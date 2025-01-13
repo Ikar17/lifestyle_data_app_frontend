@@ -36,6 +36,19 @@ const Question = ({ question, updateQuestion, removeQuestion }) => {
         mb: 3,
       }}
     >
+      {question.type === "SINGLE_CHOICE" ?
+        <Typography variant="overline" gutterBottom sx={{ display: 'block', mb: 2 }}>
+          Pytanie jednokrotnego wyboru
+        </Typography>
+      :(question.type === "MULTIPLE_CHOICE" ?
+        <Typography variant="overline" gutterBottom sx={{ display: 'block', mb: 2 }}>
+          Pytanie wielokrotnego wyboru
+        </Typography>
+        :
+        <Typography variant="overline" gutterBottom sx={{ display: 'block', mb: 2 }}>
+          Pytanie otwarte
+        </Typography>
+      )}
       <TextField
         type="text"
         placeholder="Treść pytania"

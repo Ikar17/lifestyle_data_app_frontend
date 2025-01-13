@@ -111,7 +111,9 @@ const SurveyResultsPage = () => {
                 <FilterForm onFilterChange={handleFilterChange}/>
     
                 {loading ? 
-                    <CircularProgress color="primary" />
+                    <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 4 }}>
+                        <CircularProgress color="primary" />
+                    </Box>
                 :
                     <>
                     <Grid container spacing={4}>
@@ -167,6 +169,20 @@ const SurveyResultsPage = () => {
                                             />
                                             Pytanie {index + 1}: {item.question}
                                         </Typography>
+                                        {item.questionType === 'SINGLE_CHOICE' ?
+                                            <Typography variant="overline" gutterBottom sx={{ display: 'block', mb: 2 }}>
+                                                Pytanie jednokrotnego wyboru
+                                            </Typography>
+                                        : (item.questionType === 'MULTIPLE_CHOICE' ? 
+                                            <Typography variant="overline" gutterBottom sx={{ display: 'block', mb: 2 }}>
+                                                Pytanie wielokrotnego wyboru
+                                            </Typography>
+                                            :
+                                            <Typography variant="overline" gutterBottom sx={{ display: 'block', mb: 2 }}>
+                                                Pytanie otwarte
+                                            </Typography>
+                                        )}
+
                                         {item.questionType === 'TEXT' ? (
                                             <OpenAnswersList data={item.results} />
                                         ) : (
