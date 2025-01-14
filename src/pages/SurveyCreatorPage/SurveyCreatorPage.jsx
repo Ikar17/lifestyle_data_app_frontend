@@ -121,6 +121,11 @@ export default function SurveyCreatorPage(){
   };
 
   const validation = (survey) => {
+    if(survey.title.length < 2){
+      changeSnackbarInfo("Tytuł ankiety nie może być pusty.");
+      return false;
+    }
+
     for (let i = 0; i < survey.items.length; i++) {
       const element = survey.items[i];
 
